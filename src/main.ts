@@ -3,28 +3,7 @@ import './style.css';
 import { loadFitmentsFromCsv } from './services/CsvFitmentLoader';
 import type { Fitment } from './models/Fitment';
 
-type RecommendedItem = {
-  name: string;
-  quantity: number;
-  variantId: string;
-};
 
-const fitments: Record<string, Record<string, RecommendedItem[]>> = {
-  Darche: {
-    'Eclipse 270': [
-      { name: 'HD Awning Mount', quantity: 2, variantId: 'TBD' },
-      { name: 'Spacer Kit', quantity: 1, variantId: 'TBD' },
-    ],
-    'Hi-View 1800': [
-      { name: 'HD Awning Mount', quantity: 2, variantId: 'TBD' },
-    ],
-  },
-  Oztent: {
-    'Foxwing 270': [
-      { name: 'Standard Awning Bracket Kit', quantity: 1, variantId: 'TBD' },
-    ],
-  },
-};
 
 document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
   <main class="selector">
