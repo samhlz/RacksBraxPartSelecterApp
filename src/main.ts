@@ -1,4 +1,7 @@
+console.log('main.ts is running');
 import './style.css';
+import { loadFitmentsFromCsv } from './services/CsvFitmentLoader';
+import type { Fitment } from './models/Fitment';
 
 type RecommendedItem = {
   name: string;
@@ -51,9 +54,23 @@ const modelSelect = document.querySelector<HTMLSelectElement>('#model')!;
 const result = document.querySelector<HTMLElement>('#result')!;
 const addToCartButton = document.querySelector<HTMLButtonElement>('#addToCart')!;
 
-Object.keys(fitments).forEach((brand) => {
-  brandSelect.add(new Option(brand, brand));
-});
+let csvFitments: Fitment[] = [];
+
+loadFitmentsFromCsv()
+  .then((loadedFitments) => {
+      csvFitments = loadedFitments;
+    const brands = [...new Set(csvFitments.map((fitment) => fitment.brand))].sort();
+
+    brands.forEach((brand) => {
+      brandSelect.add(new Option(brand, brand));
+    });
+
+    console.log(`Loaded ${csvFitments.length} fitments`);
+  })
+  .catch((error) => {
+    console.error(error);
+    result.textContent = 'Could not load fitment data.';
+  });
 
 brandSelect.addEventListener('change', () => {
   const brand = brandSelect.value;
@@ -65,7 +82,15 @@ brandSelect.addEventListener('change', () => {
 
   if (!brand) return;
 
-  Object.keys(fitments[brand]).forEach((model) => {
+  const models = [
+    ...new Set(
+      csvFitments
+        .filter((fitment) => fitment.brand === brand)
+        .map((fitment) => fitment.model)
+    ),
+  ].sort();
+
+  models.forEach((model) => {
     modelSelect.add(new Option(model, model));
   });
 });
@@ -76,17 +101,40 @@ modelSelect.addEventListener('change', () => {
 
   if (!brand || !model) return;
 
-  const items = fitments[brand][model];
+  const selectedFitment = csvFitments.find(
+    (fitment) => fitment.brand === brand && fitment.model === model
+  );
+
+  if (!selectedFitment) {
+    result.textContent = 'No fitment found for this awning.';
+    addToCartButton.disabled = true;
+    return;
+  }
 
   result.innerHTML = `
     <h2>Recommended kit</h2>
-    <ul>
-      ${items.map((item) => `<li>${item.quantity} × ${item.name}</li>`).join('')}
-    </ul>
+
+    <p><strong>Product range:</strong> ${selectedFitment.products[0]?.name || 'RacksBrax product'}</p>
+
+    ${selectedFitment.details ? `<p>${selectedFitment.details.replaceAll('\n', '<br>')}</p>` : ''}
+
+    ${
+      selectedFitment.pocketGuideUrl
+        ? `<p><a href="${selectedFitment.pocketGuideUrl}" target="_blank">Download pocket guide</a></p>`
+        : ''
+    }
   `;
 
   addToCartButton.disabled = false;
 });
+
+loadFitmentsFromCsv()
+  .then((fitments) => {
+    console.log('Loaded fitments:', fitments);
+  })
+  .catch((error) => {
+    console.error(error);
+  });
 
 addToCartButton.addEventListener('click', () => {
   result.innerHTML += `<p class="success">Cart simulation: complete kit added.</p>`;
