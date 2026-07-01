@@ -90,18 +90,35 @@ modelSelect.addEventListener('change', () => {
   }
 
   result.innerHTML = `
-    <h2>Recommended kit</h2>
+  <h2>Recommended kit</h2>
 
-    <p><strong>Product range:</strong> ${selectedFitment.products[0]?.name || 'RacksBrax product'}</p>
+  <p><strong>Awning:</strong> ${selectedFitment.brand} ${selectedFitment.model}</p>
 
-    ${selectedFitment.details ? `<p>${selectedFitment.details.replaceAll('\n', '<br>')}</p>` : ''}
+  <p><strong>Product range:</strong> ${selectedFitment.products[0]?.name || 'RacksBrax product'}</p>
 
-    ${
-      selectedFitment.pocketGuideUrl
-        ? `<p><a href="${selectedFitment.pocketGuideUrl}" target="_blank">Download pocket guide</a></p>`
-        : ''
-    }
-  `;
+  ${
+  selectedFitment.hitchesNeeded
+    ? `<p><strong>Hitches needed:</strong><br>${selectedFitment.hitchesNeeded.replaceAll('\n', '<br>')}</p>`
+    : ''
+}
+
+  ${
+    selectedFitment.pocketGuideUrl
+      ? `<p><a href="${selectedFitment.pocketGuideUrl}" target="_blank">Download pocket guide</a></p>`
+      : ''
+  }
+
+  ${
+    selectedFitment.details
+      ? `
+        <details class="fitment-details">
+          <summary>Show detailed fitment notes</summary>
+          <div>${selectedFitment.details.replaceAll('\n', '<br>')}</div>
+        </details>
+      `
+      : ''
+  }
+`;
 
   addToCartButton.disabled = false;
 });

@@ -10,6 +10,7 @@ export type Fitment = {
   modelVariant?: string;
   manufacturerSku?: string;
   products: RecommendedProduct[];
+  hitchesNeeded?: string;
   accessories?: string;
   details?: string;
   pocketGuideUrl?: string;

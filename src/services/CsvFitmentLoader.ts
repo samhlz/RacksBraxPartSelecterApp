@@ -3,10 +3,10 @@ import type { Fitment } from '../models/Fitment';
 type CsvRow = Record<string, string>;
 
 export async function loadFitmentsFromCsv(): Promise<Fitment[]> {
-  const response = await fetch('/data/fitments.csv');
+  const response = await fetch('/data/fitments_structured.csv');
 
   if (!response.ok) {
-    throw new Error('Could not load fitments.csv');
+    throw new Error('Could not load fitments_structured.csv');
   }
 
   const csvText = await response.text();
@@ -14,21 +14,22 @@ export async function loadFitmentsFromCsv(): Promise<Fitment[]> {
 
   const fitments: Fitment[] = rows.map((row) => {
     return {
-      brand: row['Brand-2']?.trim() || '',
-      model: row['Model']?.trim() || '',
-      modelVariant: row['Model-2']?.trim() || '',
-      manufacturerSku: row['Manufacturer SKU']?.trim() || '',
+      brand: row['brand']?.trim() || '',
+      model: row['model']?.trim() || '',
+      modelVariant: row['model_variant']?.trim() || '',
+      manufacturerSku: row['manufacturer_sku']?.trim() || '',
       products: [
         {
-          name: row['RacksBrax Products']?.trim() || 'RacksBrax product',
-          quantity: 1,
-          variantId: 'TBD',
+            name: row['product_range']?.trim() || 'RacksBrax product',
+            quantity: 1,
+            variantId: 'TBD',
         },
-      ],
-      accessories: row['Accessories']?.trim() || '',
-      details: row['Details']?.trim() || '',
-      pocketGuideUrl: row['Download Link']?.trim() || '',
-      brandLogoUrl: extractUrl(row['Logo'] || ''),
+    ],
+        hitchesNeeded: row['hitches_needed']?.trim() || '',
+        accessories: row['accessories']?.trim() || '',
+        details: row['full_details']?.trim() || '',
+        pocketGuideUrl: row['pocket_guide_url']?.trim() || '',
+        brandLogoUrl: row['logo_url']?.trim() || '',
     };
   });
 
@@ -96,7 +97,3 @@ function parseCsv(csvText: string): CsvRow[] {
   });
 }
 
-function extractUrl(value: string): string {
-  const match = value.match(/\((https?:\/\/.*?)\)/);
-  return match ? match[1] : value.trim();
-}
