@@ -26,14 +26,14 @@ export async function loadFitmentsFromCsv(): Promise<Fitment[]> {
         },
     ],
         hitchesNeeded: row['hitches_needed']?.trim() || '',
-        accessories: row['accessories']?.trim() || '',
+        accessories: row['accessory_type']?.trim() || '',
         details: row['full_details']?.trim() || '',
         pocketGuideUrl: row['pocket_guide_url']?.trim() || '',
         brandLogoUrl: row['logo_url']?.trim() || '',
     };
   });
 
-  return fitments.filter((fitment) => fitment.brand && fitment.model);
+  return fitments.filter((fitment) => fitment.brand && fitment.model && fitment.accessories === 'Awnings');
 }
 
 function parseCsv(csvText: string): CsvRow[] {
