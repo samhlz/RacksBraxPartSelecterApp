@@ -1,4 +1,3 @@
-console.log('main.ts is running');
 import './style.css';
 import { loadFitmentsFromCsv } from './services/CsvFitmentLoader';
 import type { Fitment } from './models/Fitment';
