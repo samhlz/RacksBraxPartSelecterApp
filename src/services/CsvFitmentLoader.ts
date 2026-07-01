@@ -3,7 +3,7 @@ import type { Fitment } from '../models/Fitment';
 type CsvRow = Record<string, string>;
 
 export async function loadFitmentsFromCsv(): Promise<Fitment[]> {
-  const response = await fetch('/data/fitments_structured.csv');
+  const response = await fetch(`${import.meta.env.BASE_URL}data/fitments_structured.csv`);
 
   if (!response.ok) {
     throw new Error('Could not load fitments_structured.csv');
