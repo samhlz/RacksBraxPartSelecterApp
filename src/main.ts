@@ -98,7 +98,7 @@ modelSelect.addEventListener('change', () => {
 
   ${
   selectedFitment.hitchesNeeded
-    ? `<p><strong>Hitches needed:</strong><br>${selectedFitment.hitchesNeeded.replaceAll('\n', '<br>')}</p>`
+    ? `<p><strong>Here's what you need:</strong><br>${selectedFitment.hitchesNeeded.replaceAll('\n', '<br>')}</p>`
     : ''
 }
 
