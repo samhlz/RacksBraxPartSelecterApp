@@ -6,17 +6,18 @@ import type { Fitment } from './models/Fitment';
 
 document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
   <main class="prototype-page">
-  <a class="continue-site-button" href="#">Continue to site</a>
-  
+    <a class="continue-site-button" href="#">Continue to site</a>
+
     <section class="hero">
       <p class="eyebrow">RacksBrax Fitment Finder</p>
 
       <h1>Quick release system for awnings and accessories.</h1>
       <p class="hero-copy">
-        Tell us what awning you have and we’ll show the RacksBrax hitch system you need.
+        Tell us what awning you have and we'll show the RacksBrax hitch system you need.
       </p>
 
-            <div class="finder-grid">
+      <div class="finder-card">
+        <div class="finder-grid">
           <div>
             <label for="brand">Awning brand</label>
             <select id="brand">
@@ -58,7 +59,7 @@ let csvFitments: Fitment[] = [];
 
 loadFitmentsFromCsv()
   .then((loadedFitments) => {
-      csvFitments = loadedFitments;
+    csvFitments = loadedFitments;
     const brands = [...new Set(csvFitments.map((fitment) => fitment.brand))].sort();
 
     brands.forEach((brand) => {
@@ -144,14 +145,6 @@ modelSelect.addEventListener('change', () => {
 
   addToCartButton.disabled = false;
 });
-
-loadFitmentsFromCsv()
-  .then((fitments) => {
-    console.log('Loaded fitments:', fitments);
-  })
-  .catch((error) => {
-    console.error(error);
-  });
 
 addToCartButton.addEventListener('click', () => {
   result.innerHTML += `<p class="success">Cart simulation: complete kit added.</p>`;
