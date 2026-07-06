@@ -60,15 +60,12 @@ const prototypePage = document.querySelector<HTMLElement>('.prototype-page')!;
 
 let csvFitments: Fitment[] = [];
 
-const revealFinderOnScroll = () => {
-  if (window.scrollY < 72) return;
-
-  prototypePage.classList.add('finder-revealed');
-  window.removeEventListener('scroll', revealFinderOnScroll);
+const updateFinderReveal = () => {
+  prototypePage.classList.toggle('finder-revealed', window.scrollY >= 72);
 };
 
-window.addEventListener('scroll', revealFinderOnScroll, { passive: true });
-revealFinderOnScroll();
+window.addEventListener('scroll', updateFinderReveal, { passive: true });
+updateFinderReveal();
 
 loadFitmentsFromCsv()
   .then((loadedFitments) => {
