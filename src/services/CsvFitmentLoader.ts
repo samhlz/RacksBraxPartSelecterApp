@@ -3,10 +3,10 @@ import type { Fitment } from '../models/Fitment';
 type CsvRow = Record<string, string>;
 
 export async function loadFitmentsFromCsv(): Promise<Fitment[]> {
-  const response = await fetch(`${import.meta.env.BASE_URL}data/fitments_structured.csv`);
+  const response = await fetch(`${import.meta.env.BASE_URL}data/fitments_product_columns_with_urls.csv`);
 
   if (!response.ok) {
-    throw new Error('Could not load fitments_structured.csv');
+    throw new Error('Could not load fitments_product_columns_with_urls.csv');
   }
 
   const csvText = await response.text();
@@ -14,26 +14,49 @@ export async function loadFitmentsFromCsv(): Promise<Fitment[]> {
 
   const fitments: Fitment[] = rows.map((row) => {
     return {
-      brand: row['brand']?.trim() || '',
-      model: row['model']?.trim() || '',
-      modelVariant: row['model_variant']?.trim() || '',
-      manufacturerSku: row['manufacturer_sku']?.trim() || '',
-      products: [
-        {
-            name: row['product_range']?.trim() || 'RacksBrax product',
-            quantity: 1,
-            variantId: 'TBD',
-        },
-    ],
-        hitchesNeeded: row['hitches_needed']?.trim() || '',
-        accessories: row['accessory_type']?.trim() || '',
-        details: row['full_details']?.trim() || '',
-        pocketGuideUrl: row['pocket_guide_url']?.trim() || '',
-        brandLogoUrl: row['logo_url']?.trim() || '',
+      brand: row['Brand-2']?.trim() || '',
+      model: row['Model']?.trim() || '',
+      modelVariant: row['Model-2']?.trim() || '',
+      manufacturerSku: row['Manufacturer SKU']?.trim() || '',
+      productRange: row['RacksBrax Products']?.trim() || '',
+      products: buildProducts(row),
+      accessories: row['Accessories']?.trim() || '',
+      pocketGuideUrl: row['Download Link']?.trim() || '',
+      brandLogoUrl: extractLogoUrl(row['Logo']?.trim() || ''),
     };
   });
 
   return fitments.filter((fitment) => fitment.brand && fitment.model && fitment.accessories === 'Awnings');
+}
+
+function buildProducts(row: CsvRow): Fitment['products'] {
+  const products: Fitment['products'] = [];
+
+  [1, 2].forEach((productNumber) => {
+    const name = row[`Product${productNumber}`]?.trim() || '';
+
+    if (!name) return;
+
+    const url = row[`Product${productNumber} URL`]?.trim() || '';
+
+    products.push({
+      name,
+      sku: row[`Product${productNumber} SKU`]?.trim() || '',
+      url,
+      quantity: 1,
+      variantId: extractVariantId(url),
+    });
+  });
+
+  return products;
+}
+
+function extractVariantId(url: string) {
+  return url.match(/[?&]variant=(\d+)/)?.[1] || '';
+}
+
+function extractLogoUrl(logo: string) {
+  return logo.match(/\((https?:\/\/[^)]+)\)/)?.[1] || logo;
 }
 
 function parseCsv(csvText: string): CsvRow[] {

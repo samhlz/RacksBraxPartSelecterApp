@@ -177,6 +177,13 @@ select {
   text-overflow: ellipsis;
 }
 
+.action-buttons {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 1fr;
+  gap: 12px;
+  margin-top: 24px;
+}
+
 button {
   margin-top: 24px;
   border: none;
@@ -184,6 +191,14 @@ button {
   color: white;
   font-weight: 700;
   cursor: pointer;
+}
+
+.action-buttons button {
+  margin-top: 0;
+}
+
+.primary-action {
+  background: #00495D;
 }
 
 button:disabled {
@@ -199,6 +214,56 @@ button:disabled {
   line-height: 1.45;
 }
 
+.recommendation-header h3 {
+  margin: 0;
+  font-size: 22px;
+}
+
+.recommendation-header p {
+  margin: 8px 0 0;
+  color: #4d4d4d;
+}
+
+.selected-awning {
+  margin: 16px 0;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: #ffffff;
+}
+
+.product-results {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+}
+
+.product-card {
+  border: 1px solid #d9d9d9;
+  border-radius: 8px;
+  background: #ffffff;
+  padding: 14px;
+}
+
+.product-label {
+  margin: 0 0 8px;
+  color: #00495D;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.product-card h4 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.product-sku {
+  margin: 8px 0 0;
+  color: #555;
+  font-weight: 700;
+}
+
 .fitment-details {
   margin-top: 16px;
 }
@@ -211,6 +276,10 @@ button:disabled {
 
   h1 {
     font-size: 46px;
+  }
+
+  .action-buttons {
+    grid-template-columns: 1fr;
   }
 }
 

@@ -37,12 +37,12 @@ samhlz/RacksBraxPartSelecterApp
 
 The app currently:
 
-- Loads structured fitment data from `public/data/fitments_structured.csv`.
+- Loads product-column fitment data from `public/data/fitments_product_columns_with_urls.csv`.
 - Filters to awning fitments.
 - Has an awning brand dropdown.
 - Has an awning model dropdown.
-- Shows the recommended product range and hitches needed.
-- Links to the pocket guide when present in the data.
+- Shows only `Here's what you need` with one or two product recommendation lines.
+- Formats recommendations as `Product name ####`.
 - Has a homepage-style prototype experience.
 - Uses background colour `#00495D`.
 - Uses the main headline: `Quick release system for awnings and accessories.`
@@ -55,6 +55,7 @@ Current known local details:
 - Main styles: `src/style.css`
 - CSV loader: `src/services/CsvFitmentLoader.ts`
 - Fitment types: `src/models/Fitment.ts`
+- Current source CSV: `public/data/fitments_product_columns_with_urls.csv`
 - `npm.cmd run build` passes on Windows.
 - Use `npm.cmd` rather than `npm` in PowerShell if execution policy blocks `npm.ps1`.
 
@@ -106,7 +107,24 @@ Do not design the data as if each awning has only one required hitch.
 
 ## Data Direction
 
-Current prototype uses a structured CSV derived from Airtable.
+Current prototype uses `public/data/fitments_product_columns_with_urls.csv`, derived from Airtable.
+
+Important current CSV columns:
+
+- `Brand-2`
+- `Model`
+- `Model-2`
+- `Manufacturer SKU`
+- `RacksBrax Products`
+- `Accessories`
+- `Product1`
+- `Product1 SKU`
+- `Product1 URL`
+- `Product2`
+- `Product2 SKU`
+- `Product2 URL`
+- `Download Link`
+- `Logo`
 
 Long term, data should likely be separated into:
 

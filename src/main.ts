@@ -38,7 +38,11 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
           Select your awning to see the recommended RacksBrax hitch.
         </section>
 
-        <button id="addToCart" disabled>View recommended kit</button>
+        <div class="action-buttons">
+          <button id="buyNow" class="primary-action" disabled>Buy now</button>
+          <button id="addToCart" disabled>Add to cart</button>
+          <button id="checkItOut" disabled>Check it out</button>
+        </div>
       </div>
     </section>
   </main>
@@ -47,11 +51,33 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
 const brandSelect = document.querySelector<HTMLSelectElement>('#brand')!;
 const modelSelect = document.querySelector<HTMLSelectElement>('#model')!;
 const result = document.querySelector<HTMLElement>('#result')!;
+const buyNowButton = document.querySelector<HTMLButtonElement>('#buyNow')!;
 const addToCartButton = document.querySelector<HTMLButtonElement>('#addToCart')!;
+const checkItOutButton = document.querySelector<HTMLButtonElement>('#checkItOut')!;
 const prototypePage = document.querySelector<HTMLElement>('.prototype-page')!;
 
 let csvFitments: Fitment[] = [];
 let touchStartY = 0;
+
+const actionButtons = [buyNowButton, addToCartButton, checkItOutButton];
+
+const renderProductCards = (fitment: Fitment) => {
+  const products = fitment.products.length
+    ? fitment.products
+    : [{ name: 'RacksBrax hitch system', quantity: 1 }];
+
+  return products
+    .map(
+      (product) => `
+        <article class="product-card">
+          <p class="product-label">Required product</p>
+          <h4>${product.name}</h4>
+          ${product.sku ? `<p class="product-sku">SKU ${product.sku}</p>` : ''}
+        </article>
+      `
+    )
+    .join('');
+};
 
 const setFinderReveal = (isRevealed: boolean) => {
   prototypePage.classList.toggle('finder-revealed', isRevealed);
@@ -110,7 +136,9 @@ brandSelect.addEventListener('change', () => {
   modelSelect.innerHTML = '<option value="">Select model</option>';
   modelSelect.disabled = !brand;
   result.textContent = 'Select a model to see what you need.';
-  addToCartButton.disabled = true;
+  actionButtons.forEach((button) => {
+    button.disabled = true;
+  });
 
   if (!brand) return;
 
@@ -139,44 +167,38 @@ modelSelect.addEventListener('change', () => {
 
   if (!selectedFitment) {
     result.textContent = 'No fitment found for this awning.';
-    addToCartButton.disabled = true;
+    actionButtons.forEach((button) => {
+      button.disabled = true;
+    });
     return;
   }
 
   result.innerHTML = `
-  <h2>Recommended kit</h2>
+    <div class="recommendation-header">
+      <h3>Your recommended RacksBrax setup</h3>
+      <p>Based on your awning selection, these are the parts you need.</p>
+    </div>
 
-  <p><strong>Awning:</strong> ${selectedFitment.brand} ${selectedFitment.model}</p>
+    <p class="selected-awning"><strong>Selected awning:</strong> ${selectedFitment.brand} ${selectedFitment.model}</p>
 
-  <p><strong>Product range:</strong> ${selectedFitment.products[0]?.name || 'RacksBrax product'}</p>
+    <div class="product-results">
+      ${renderProductCards(selectedFitment)}
+    </div>
+  `;
 
-  ${
-  selectedFitment.hitchesNeeded
-    ? `<p><strong>Here's what you need:</strong><br>${selectedFitment.hitchesNeeded.replaceAll('\n', '<br>')}</p>`
-    : ''
-}
+  actionButtons.forEach((button) => {
+    button.disabled = false;
+  });
+});
 
-  ${
-    selectedFitment.pocketGuideUrl
-      ? `<p><a href="${selectedFitment.pocketGuideUrl}" target="_blank">Download pocket guide</a></p>`
-      : ''
-  }
-
-  ${
-    selectedFitment.details
-      ? `
-        <details class="fitment-details">
-          <summary>Show detailed fitment notes</summary>
-          <div>${selectedFitment.details.replaceAll('\n', '<br>')}</div>
-        </details>
-      `
-      : ''
-  }
-`;
-
-  addToCartButton.disabled = false;
+buyNowButton.addEventListener('click', () => {
+  result.innerHTML += `<p class="success">Buy now simulation: checkout started.</p>`;
 });
 
 addToCartButton.addEventListener('click', () => {
   result.innerHTML += `<p class="success">Cart simulation: complete kit added.</p>`;
+});
+
+checkItOutButton.addEventListener('click', () => {
+  result.innerHTML += `<p class="success">Check it out simulation: product details opened.</p>`;
 });
