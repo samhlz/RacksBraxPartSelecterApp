@@ -9,12 +9,14 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
     <a class="continue-site-button" href="#">Continue to site</a>
 
     <section class="hero">
-      <p class="eyebrow">RacksBrax Fitment Finder</p>
+      <div class="hero-intro">
+        <p class="eyebrow">RacksBrax Fitment Finder</p>
 
-      <h1>Quick release system for awnings and accessories.</h1>
-      <p class="hero-copy">
-        Tell us what awning you have and we'll show the RacksBrax hitch system you need.
-      </p>
+        <h1>Quick release system for awnings and accessories.</h1>
+        <p class="hero-copy">
+          Tell us what awning you have and we'll show the RacksBrax hitch system you need.
+        </p>
+      </div>
 
       <div class="finder-card">
         <div class="finder-grid">

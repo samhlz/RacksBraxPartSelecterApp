@@ -35,9 +35,20 @@ body {
   padding: 96px 24px;
   display: grid;
   grid-template-columns: 1fr;
-  gap: 36px;
   align-items: center;
+  justify-items: center;
   text-align: center;
+  min-height: 68vh;
+}
+
+.hero-intro,
+.finder-card {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.hero-intro {
+  animation: fade-intro-out 3.2s ease forwards;
 }
 
 .eyebrow {
@@ -74,6 +85,10 @@ h1 {
   box-sizing: border-box;
   margin: 0 auto;
   text-align: left;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(18px) scale(0.98);
+  animation: fade-finder-in 3.2s ease forwards;
 }
 
 .hero-copy {
@@ -150,6 +165,37 @@ button:disabled {
   line-height: 1.45;
 }
 
+@keyframes fade-intro-out {
+  0%,
+  42% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+
+  78%,
+  100% {
+    opacity: 0;
+    transform: translateY(-18px) scale(0.98);
+    visibility: hidden;
+  }
+}
+
+@keyframes fade-finder-in {
+  0%,
+  42% {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(18px) scale(0.98);
+  }
+
+  78%,
+  100% {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0) scale(1);
+  }
+}
+
 .fitment-details {
   margin-top: 16px;
 }
@@ -174,9 +220,23 @@ button:disabled {
   .hero {
     grid-template-columns: 1fr;
     padding-top: 40px;
+    min-height: 72vh;
   }
 
   h1 {
     font-size: 46px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-intro {
+    display: none;
+  }
+
+  .finder-card {
+    animation: none;
+    opacity: 1;
+    pointer-events: auto;
+    transform: none;
   }
 }
