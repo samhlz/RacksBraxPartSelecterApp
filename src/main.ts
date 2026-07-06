@@ -5,25 +5,47 @@ import type { Fitment } from './models/Fitment';
 
 
 document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
-  <main class="selector">
-    <h1>RacksBrax Part Selector</h1>
-    <p>Select your awning to find the correct mounting kit.</p>
+  <main class="prototype-page">
+  <a class="continue-site-button" href="#">Continue to site</a>
+  
+    <section class="hero">
+      <p class="eyebrow">RacksBrax Fitment Finder</p>
 
-    <label for="brand">Awning brand</label>
-    <select id="brand">
-      <option value="">Select brand</option>
-    </select>
+      <h1>Quick release system for awnings and accessories.</h1>
+      <p class="hero-copy">
+        Tell us what awning you have and we’ll show the RacksBrax hitch system you need.
+      </p>
 
-    <label for="model">Awning model</label>
-    <select id="model" disabled>
-      <option value="">Select model</option>
-    </select>
+            <div class="finder-grid">
+          <div>
+            <label for="brand">Awning brand</label>
+            <select id="brand">
+              <option value="">Select awning brand</option>
+            </select>
+          </div>
 
-    <section id="result" class="result">
-      Select a brand and model to see what you need.
+          <div>
+            <label for="model">Awning model</label>
+            <select id="model" disabled>
+              <option value="">Select awning model</option>
+            </select>
+          </div>
+        </div>
+        <section id="result" class="result">
+          Select your awning to see the recommended RacksBrax hitch.
+        </section>
+
+        <button id="addToCart" disabled>View recommended kit</button>
+      </div>
     </section>
 
-    <button id="addToCart" disabled>Add complete kit</button>
+    <section class="supporting-copy">
+      <h2>Stop guessing. Start with your awning.</h2>
+      <p>
+        RacksBrax products work as a system. The right hitch depends on the awning you own,
+        and some awnings may require adaptors or specific mounting hardware.
+      </p>
+    </section>
   </main>
 `;
 
