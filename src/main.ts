@@ -56,8 +56,19 @@ const brandSelect = document.querySelector<HTMLSelectElement>('#brand')!;
 const modelSelect = document.querySelector<HTMLSelectElement>('#model')!;
 const result = document.querySelector<HTMLElement>('#result')!;
 const addToCartButton = document.querySelector<HTMLButtonElement>('#addToCart')!;
+const prototypePage = document.querySelector<HTMLElement>('.prototype-page')!;
 
 let csvFitments: Fitment[] = [];
+
+const revealFinderOnScroll = () => {
+  if (window.scrollY < 72) return;
+
+  prototypePage.classList.add('finder-revealed');
+  window.removeEventListener('scroll', revealFinderOnScroll);
+};
+
+window.addEventListener('scroll', revealFinderOnScroll, { passive: true });
+revealFinderOnScroll();
 
 loadFitmentsFromCsv()
   .then((loadedFitments) => {

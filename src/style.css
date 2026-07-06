@@ -48,7 +48,10 @@ body {
 }
 
 .hero-intro {
-  animation: fade-intro-out 3.2s ease forwards;
+  transition:
+    opacity 0.7s ease,
+    transform 0.7s ease,
+    visibility 0s linear 0.7s;
 }
 
 .eyebrow {
@@ -88,7 +91,21 @@ h1 {
   opacity: 0;
   pointer-events: none;
   transform: translateY(18px) scale(0.98);
-  animation: fade-finder-in 3.2s ease forwards;
+  transition:
+    opacity 0.7s ease,
+    transform 0.7s ease;
+}
+
+.finder-revealed .hero-intro {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-18px) scale(0.98);
+}
+
+.finder-revealed .finder-card {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0) scale(1);
 }
 
 .hero-copy {
@@ -165,37 +182,6 @@ button:disabled {
   line-height: 1.45;
 }
 
-@keyframes fade-intro-out {
-  0%,
-  42% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-
-  78%,
-  100% {
-    opacity: 0;
-    transform: translateY(-18px) scale(0.98);
-    visibility: hidden;
-  }
-}
-
-@keyframes fade-finder-in {
-  0%,
-  42% {
-    opacity: 0;
-    pointer-events: none;
-    transform: translateY(18px) scale(0.98);
-  }
-
-  78%,
-  100% {
-    opacity: 1;
-    pointer-events: auto;
-    transform: translateY(0) scale(1);
-  }
-}
-
 .fitment-details {
   margin-top: 16px;
 }
@@ -234,7 +220,7 @@ button:disabled {
   }
 
   .finder-card {
-    animation: none;
+    transition: none;
     opacity: 1;
     pointer-events: auto;
     transform: none;
