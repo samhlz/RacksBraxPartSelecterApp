@@ -3,6 +3,7 @@ body {
   font-family: Arial, sans-serif;
   background: #00495D;
   color: #ffffff;
+  overflow: hidden;
 }
 
 .continue-site-button {
@@ -26,7 +27,8 @@ body {
 }
 
 .prototype-page {
-  min-height: 100vh;
+  min-height: 100svh;
+  overflow: hidden;
 }
 
 .hero {
@@ -38,7 +40,8 @@ body {
   align-items: center;
   justify-items: center;
   text-align: center;
-  min-height: 68vh;
+  min-height: 100svh;
+  box-sizing: border-box;
 }
 
 .hero-intro,
@@ -200,27 +203,10 @@ button:disabled {
   margin-top: 16px;
 }
 
-.supporting-copy {
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 24px 24px 72px;
-}
-
-.supporting-copy h2 {
-  font-size: 34px;
-  margin-bottom: 8px;
-}
-
-.supporting-copy p {
-  font-size: 18px;
-  line-height: 1.5;
-}
-
 @media (max-width: 820px) {
   .hero {
     grid-template-columns: 1fr;
     padding-top: 40px;
-    min-height: 72vh;
   }
 
   h1 {

@@ -41,14 +41,6 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
         <button id="addToCart" disabled>View recommended kit</button>
       </div>
     </section>
-
-    <section class="supporting-copy">
-      <h2>Stop guessing. Start with your awning.</h2>
-      <p>
-        RacksBrax products work as a system. The right hitch depends on the awning you own,
-        and some awnings may require adaptors or specific mounting hardware.
-      </p>
-    </section>
   </main>
 `;
 
@@ -59,13 +51,42 @@ const addToCartButton = document.querySelector<HTMLButtonElement>('#addToCart')!
 const prototypePage = document.querySelector<HTMLElement>('.prototype-page')!;
 
 let csvFitments: Fitment[] = [];
+let touchStartY = 0;
 
-const updateFinderReveal = () => {
-  prototypePage.classList.toggle('finder-revealed', window.scrollY >= 72);
+const setFinderReveal = (isRevealed: boolean) => {
+  prototypePage.classList.toggle('finder-revealed', isRevealed);
 };
 
-window.addEventListener('scroll', updateFinderReveal, { passive: true });
-updateFinderReveal();
+window.addEventListener(
+  'wheel',
+  (event) => {
+    if (Math.abs(event.deltaY) < 8) return;
+
+    setFinderReveal(event.deltaY > 0);
+  },
+  { passive: true }
+);
+
+window.addEventListener(
+  'touchstart',
+  (event) => {
+    touchStartY = event.touches[0]?.clientY ?? 0;
+  },
+  { passive: true }
+);
+
+window.addEventListener(
+  'touchmove',
+  (event) => {
+    const currentY = event.touches[0]?.clientY ?? touchStartY;
+    const deltaY = touchStartY - currentY;
+
+    if (Math.abs(deltaY) < 24) return;
+
+    setFinderReveal(deltaY > 0);
+  },
+  { passive: true }
+);
 
 loadFitmentsFromCsv()
   .then((loadedFitments) => {
