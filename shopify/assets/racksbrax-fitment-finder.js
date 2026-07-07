@@ -70,6 +70,15 @@
     return match ? match[1] : '';
   }
 
+  function escapeHtml(value) {
+    return String(value || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
   function buildProducts(row) {
     var products = [];
 
@@ -148,13 +157,13 @@
     var cacheKey = productCacheKey(product);
 
     if (!product.url) {
-      return Promise.resolve(undefined);
+      return Promise.resolve({});
     }
 
     if (!priceCache[cacheKey]) {
       priceCache[cacheKey] = fetch(productJsonUrl(product.url))
         .then(function (response) {
-          if (!response.ok) return undefined;
+          if (!response.ok) return {};
 
           return response.json();
         })
@@ -166,12 +175,14 @@
 
           variant = variant || (variants && variants[0]);
 
-          return variant && typeof variant.price === 'number'
-            ? formatPrice(variant.price)
-            : undefined;
+          return {
+            imageUrl: productData && (productData.featured_image || (productData.images && productData.images[0])),
+            price: variant && typeof variant.price === 'number' ? formatPrice(variant.price) : undefined,
+            variantId: variant && variant.id ? String(variant.id) : undefined,
+          };
         })
         .catch(function () {
-          return undefined;
+          return {};
         });
     }
 
@@ -180,8 +191,10 @@
 
   function hydrateProductPrices(result, fitment) {
     Promise.all(fitment.products.map(loadProductPrice)).then(function (prices) {
-      prices.forEach(function (price, index) {
-        fitment.products[index].price = price || 'Price coming soon';
+      prices.forEach(function (productDetails, index) {
+        fitment.products[index].price = productDetails.price || 'Price coming soon';
+        fitment.products[index].imageUrl = productDetails.imageUrl || fitment.products[index].imageUrl;
+        fitment.products[index].variantId = fitment.products[index].variantId || productDetails.variantId || '';
       });
 
       var productResults = result.querySelector('.racksbrax-fitment-finder__product-results');
@@ -195,20 +208,43 @@
   function renderProductCards(fitment) {
     return fitment.products
       .map(function (product) {
+        var productName = escapeHtml(product.name);
+        var tagName = product.url ? 'a' : 'article';
+        var linkAttributes = product.url
+          ? ' href="' + escapeHtml(product.url) + '" class="racksbrax-fitment-finder__product-card"'
+          : ' class="racksbrax-fitment-finder__product-card"';
+
         return [
-          '<article class="racksbrax-fitment-finder__product-card">',
+          '<' + tagName + linkAttributes + '>',
+          product.imageUrl
+            ? '<img class="racksbrax-fitment-finder__product-image" src="' +
+              escapeHtml(product.imageUrl) +
+              '" alt="' +
+              productName +
+              '" loading="lazy">'
+            : '',
+          '<div class="racksbrax-fitment-finder__product-card-copy">',
           '<p class="racksbrax-fitment-finder__product-label">Required product</p>',
-          '<h4>' + product.name + '</h4>',
-          '<p class="racksbrax-fitment-finder__price">' + (product.price || 'Loading price') + '</p>',
-          product.url
-            ? '<a class="racksbrax-fitment-finder__product-link" href="' +
-              product.url +
-              '" target="_blank" rel="noopener">View product</a>'
-            : '<p class="racksbrax-fitment-finder__missing-link">Product page coming soon</p>',
-          '</article>',
+          '<h4>' + productName + '</h4>',
+          '<p class="racksbrax-fitment-finder__price">' + escapeHtml(product.price || 'Loading price') + '</p>',
+          !product.url ? '<p class="racksbrax-fitment-finder__missing-link">Product page coming soon</p>' : '',
+          '</div>',
+          '</' + tagName + '>',
         ].join('');
       })
       .join('');
+  }
+
+  function ensureProductsReady(fitment) {
+    return Promise.all(fitment.products.map(loadProductPrice)).then(function (productDetailsList) {
+      productDetailsList.forEach(function (productDetails, index) {
+        fitment.products[index].price = productDetails.price || fitment.products[index].price;
+        fitment.products[index].imageUrl = productDetails.imageUrl || fitment.products[index].imageUrl;
+        fitment.products[index].variantId = fitment.products[index].variantId || productDetails.variantId || '';
+      });
+
+      return fitment;
+    });
   }
 
   function cartItemsForFitment(fitment) {
@@ -222,14 +258,6 @@
           quantity: 1,
         };
       });
-  }
-
-  function firstProductUrl(fitment) {
-    var product = fitment.products.find(function (item) {
-      return item.url;
-    });
-
-    return product ? product.url : '';
   }
 
   function setActionStatus(result, message, isError) {
@@ -267,24 +295,13 @@
   function attachActionButtons(result, fitment) {
     var buyNowButton = result.querySelector('[data-buy-now]');
     var addToCartButton = result.querySelector('[data-add-to-cart]');
-    var closerLookButton = result.querySelector('[data-closer-look]');
-    var productUrl = firstProductUrl(fitment);
-
-    if (closerLookButton) {
-      closerLookButton.disabled = !productUrl;
-      closerLookButton.addEventListener('click', function () {
-        if (productUrl) {
-          window.location.href = productUrl;
-        }
-      });
-    }
-
     if (addToCartButton) {
       addToCartButton.addEventListener('click', function () {
         addToCartButton.disabled = true;
         setActionStatus(result, 'Adding setup to cart...', false);
 
-        addFitmentToCart(fitment)
+        ensureProductsReady(fitment)
+          .then(addFitmentToCart)
           .then(function () {
             setActionStatus(result, 'Added to cart.', false);
             window.location.href = '/cart';
@@ -301,7 +318,8 @@
         buyNowButton.disabled = true;
         setActionStatus(result, 'Preparing checkout...', false);
 
-        addFitmentToCart(fitment)
+        ensureProductsReady(fitment)
+          .then(addFitmentToCart)
           .then(function () {
             window.location.href = '/checkout';
           })
@@ -320,9 +338,9 @@
       unavailableMessage,
       '</h3>',
       '<p>Selected awning: ',
-      fitment.brand,
+      escapeHtml(fitment.brand),
       ' ',
-      fitment.model,
+      escapeHtml(fitment.model),
       '</p>',
       '</div>',
     ].join('');
@@ -335,9 +353,9 @@
       '<p>Based on your awning selection, these are the parts you need.</p>',
       '</div>',
       '<p class="racksbrax-fitment-finder__selected-awning"><strong>Selected awning:</strong> ',
-      fitment.brand,
+      escapeHtml(fitment.brand),
       ' ',
-      fitment.model,
+      escapeHtml(fitment.model),
       '</p>',
       '<div class="racksbrax-fitment-finder__product-results">',
       renderProductCards(fitment),
@@ -345,14 +363,8 @@
       '<div class="racksbrax-fitment-finder__actions">',
       '<button class="racksbrax-fitment-finder__primary-action" type="button" data-buy-now>Buy now</button>',
       '<button class="racksbrax-fitment-finder__secondary-action" type="button" data-add-to-cart>Add to cart</button>',
-      '<button class="racksbrax-fitment-finder__secondary-action" type="button" data-closer-look>Have a closer look</button>',
       '</div>',
       '<p class="racksbrax-fitment-finder__action-status" data-action-status></p>',
-      fitment.pocketGuideUrl
-        ? '<a class="racksbrax-fitment-finder__pocket-guide" href="' +
-          fitment.pocketGuideUrl +
-          '" target="_blank" rel="noopener">View pocket guide</a>'
-        : '',
     ].join('');
 
     hydrateProductPrices(result, fitment);
