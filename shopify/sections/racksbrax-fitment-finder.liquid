@@ -1,5 +1,3 @@
-{{ 'racksbrax-fitment-finder.css' | asset_url | stylesheet_tag }}
-
 <style>
   .racksbrax-fitment-finder {
     position: relative;
@@ -319,7 +317,7 @@
   </div>
 </section>
 
-{{ 'racksbrax-fitment-finder.js' | asset_url | script_tag }}
+<script src="{{ 'racksbrax-fitment-finder.js' | asset_url }}" defer></script>
 
 {% schema %}
 {
