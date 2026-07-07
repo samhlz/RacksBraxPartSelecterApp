@@ -1,0 +1,70 @@
+{{ 'racksbrax-fitment-finder.css' | asset_url | stylesheet_tag }}
+
+<section
+  class="racksbrax-fitment-finder"
+  data-racksbrax-fitment-finder
+  data-fitments-url="{{ 'fitments_product_columns_with_urls.csv' | asset_url }}"
+>
+  <a class="racksbrax-fitment-finder__continue" href="{{ section.settings.continue_url }}">
+    {{ section.settings.continue_label }}
+  </a>
+
+  <div class="racksbrax-fitment-finder__inner">
+    <div class="racksbrax-fitment-finder__intro">
+      <p class="racksbrax-fitment-finder__eyebrow">RacksBrax Fitment Finder</p>
+      <h1>Quick release system for awnings and accessories.</h1>
+      <p>Tell us what awning you have.</p>
+    </div>
+
+    <p class="racksbrax-fitment-finder__card-kicker">I have</p>
+
+    <div class="racksbrax-fitment-finder__card">
+      <div class="racksbrax-fitment-finder__grid">
+        <div>
+          <label for="RacksBraxBrand-{{ section.id }}">Brand</label>
+          <select id="RacksBraxBrand-{{ section.id }}" data-brand-select>
+            <option value="">Select brand</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="RacksBraxModel-{{ section.id }}">Model</label>
+          <select id="RacksBraxModel-{{ section.id }}" data-model-select disabled>
+            <option value="">Select model</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="racksbrax-fitment-finder__result" data-result>
+        Tell us what awning you have to see your recommended RacksBrax setup.
+      </div>
+    </div>
+  </div>
+</section>
+
+{{ 'racksbrax-fitment-finder.js' | asset_url | script_tag }}
+
+{% schema %}
+{
+  "name": "RacksBrax fitment finder",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "continue_label",
+      "label": "Continue link label",
+      "default": "Continue to site"
+    },
+    {
+      "type": "url",
+      "id": "continue_url",
+      "label": "Continue link URL"
+    }
+  ],
+  "presets": [
+    {
+      "name": "RacksBrax fitment finder"
+    }
+  ]
+}
+{% endschema %}

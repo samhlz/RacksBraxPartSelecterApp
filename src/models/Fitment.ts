@@ -2,6 +2,7 @@ export type RecommendedProduct = {
   name: string;
   sku?: string;
   url?: string;
+  price?: string;
   quantity: number;
   variantId?: string;
 };

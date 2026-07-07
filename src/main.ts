@@ -63,8 +63,11 @@ const prototypePage = document.querySelector<HTMLElement>('.prototype-page')!;
 
 let csvFitments: Fitment[] = [];
 let touchStartY = 0;
+let renderVersion = 0;
 
 const actionButtons = [buyNowButton, addToCartButton, checkItOutButton];
+const unavailableMessage = "we don't fitt. :(... yet 👀";
+const priceCache = new Map<string, Promise<string | undefined>>();
 
 const setActionsVisible = (isVisible: boolean) => {
   actionButtonGroup.classList.toggle('is-visible', isVisible);
@@ -74,21 +77,96 @@ const setActionsVisible = (isVisible: boolean) => {
 };
 
 const renderProductCards = (fitment: Fitment) => {
-  const products = fitment.products.length
-    ? fitment.products
-    : [{ name: 'RacksBrax hitch system', quantity: 1 }];
-
-  return products
+  return fitment.products
     .map(
       (product) => `
         <article class="product-card">
           <p class="product-label">Required product</p>
           <h4>${product.name}</h4>
-          ${product.sku ? `<p class="product-sku">${product.sku}</p>` : ''}
+          <p class="product-price">${product.price || 'Loading price'}</p>
         </article>
       `
     )
     .join('');
+};
+
+const isUnavailableFitment = (fitment: Fitment) => {
+  if (!fitment.products.length) return true;
+
+  return fitment.products.some((product) => {
+    const productText = `${product.name} ${product.sku || ''}`.toLowerCase();
+
+    return productText.includes('not compatible') || productText.includes('series 33');
+  });
+};
+
+const renderUnavailableFitment = (fitment: Fitment) => {
+  result.innerHTML = `
+    <div class="recommendation-header">
+      <h3>${unavailableMessage}</h3>
+      <p>Selected awning: ${fitment.brand} ${fitment.model}</p>
+    </div>
+  `;
+  setActionsVisible(false);
+};
+
+const productCacheKey = (product: Fitment['products'][number]) =>
+  `${product.url || ''}#${product.variantId || ''}`;
+
+const productJsonUrl = (productUrl: string) => {
+  const url = new URL(productUrl);
+  url.search = '';
+  url.hash = '';
+  url.pathname = `${url.pathname.replace(/\/$/, '')}.js`;
+
+  return url.toString();
+};
+
+const formatPrice = (priceInCents: number) =>
+  new Intl.NumberFormat('en-AU', {
+    style: 'currency',
+    currency: 'AUD',
+  }).format(priceInCents / 100);
+
+const loadProductPrice = (product: Fitment['products'][number]) => {
+  const cacheKey = productCacheKey(product);
+
+  if (!product.url) {
+    return Promise.resolve(undefined);
+  }
+
+  if (!priceCache.has(cacheKey)) {
+    priceCache.set(
+      cacheKey,
+      fetch(productJsonUrl(product.url))
+        .then((response) => {
+          if (!response.ok) return undefined;
+
+          return response.json();
+        })
+        .then((productData) => {
+          const variants = productData?.variants as Array<{ id: number; price: number }> | undefined;
+          const variant = variants?.find((item) => String(item.id) === product.variantId) || variants?.[0];
+
+          return typeof variant?.price === 'number' ? formatPrice(variant.price) : undefined;
+        })
+        .catch(() => undefined)
+    );
+  }
+
+  return priceCache.get(cacheKey)!;
+};
+
+const hydrateProductPrices = async (fitment: Fitment, version: number) => {
+  const prices = await Promise.all(fitment.products.map(loadProductPrice));
+
+  prices.forEach((price, index) => {
+    fitment.products[index].price = price || 'Price coming soon';
+  });
+
+  if (version === renderVersion) {
+    result.querySelector('.product-results')!.innerHTML = renderProductCards(fitment);
+  }
 };
 
 const setFinderReveal = (isRevealed: boolean) => {
@@ -166,6 +244,7 @@ brandSelect.addEventListener('change', () => {
 });
 
 modelSelect.addEventListener('change', () => {
+  const currentRenderVersion = ++renderVersion;
   const brand = brandSelect.value;
   const model = modelSelect.value;
 
@@ -179,8 +258,13 @@ modelSelect.addEventListener('change', () => {
   );
 
   if (!selectedFitment) {
-    result.textContent = 'No fitment found for this awning.';
+    result.textContent = unavailableMessage;
     setActionsVisible(false);
+    return;
+  }
+
+  if (isUnavailableFitment(selectedFitment)) {
+    renderUnavailableFitment(selectedFitment);
     return;
   }
 
@@ -198,6 +282,7 @@ modelSelect.addEventListener('change', () => {
   `;
 
   setActionsVisible(true);
+  void hydrateProductPrices(selectedFitment, currentRenderVersion);
 });
 
 buyNowButton.addEventListener('click', () => {

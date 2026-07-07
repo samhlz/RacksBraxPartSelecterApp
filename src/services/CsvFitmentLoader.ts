@@ -1,65 +1,81 @@
-import type { Fitment } from '../models/Fitment';
+import type { Fitment, RecommendedProduct } from '../models/Fitment';
 
-type CsvRow = Record<string, string>;
+const CSV_PATH = `${import.meta.env.BASE_URL}data/fitments_product_columns_with_urls.csv`;
 
-export async function loadFitmentsFromCsv(): Promise<Fitment[]> {
-  const response = await fetch(`${import.meta.env.BASE_URL}data/fitments_product_columns_with_urls.csv`);
+export async function loadFitments(): Promise<Fitment[]> {
+  const response = await fetch(CSV_PATH);
 
   if (!response.ok) {
-    throw new Error('Could not load fitments_product_columns_with_urls.csv');
+    throw new Error(`Failed to load fitments CSV: ${response.status}`);
   }
 
   const csvText = await response.text();
   const rows = parseCsv(csvText);
 
-  const fitments: Fitment[] = rows.map((row) => {
-    return {
-      brand: row['Brand-2']?.trim() || '',
-      model: row['Model']?.trim() || '',
-      modelVariant: row['Model-2']?.trim() || '',
-      manufacturerSku: row['Manufacturer SKU']?.trim() || '',
-      productRange: row['RacksBrax Products']?.trim() || '',
-      products: buildProducts(row),
-      accessories: row['Accessories']?.trim() || '',
-      pocketGuideUrl: row['Download Link']?.trim() || '',
-      brandLogoUrl: extractLogoUrl(row['Logo']?.trim() || ''),
-    };
-  });
-
-  return fitments.filter((fitment) => fitment.brand && fitment.model && fitment.accessories === 'Awnings');
+  return rows
+    .map(rowToFitment)
+    .filter((fitment) => fitment.brand && fitment.model && fitment.accessories === 'Awnings');
 }
 
-function buildProducts(row: CsvRow): Fitment['products'] {
-  const products: Fitment['products'] = [];
+function rowToFitment(row: Record<string, string>): Fitment {
+  const product1 = makeProduct(
+    row['Product1'],
+    row['Product1 SKU'],
+    row['Product1 URL']
+  );
 
-  [1, 2].forEach((productNumber) => {
-    const name = row[`Product${productNumber}`]?.trim() || '';
+  const product2 = makeProduct(
+    row['Product2'],
+    row['Product2 SKU'],
+    row['Product2 URL']
+  );
 
-    if (!name) return;
-
-    const url = row[`Product${productNumber} URL`]?.trim() || '';
-
-    products.push({
-      name,
-      sku: row[`Product${productNumber} SKU`]?.trim() || '',
-      url,
-      quantity: 1,
-      variantId: extractVariantId(url),
-    });
-  });
-
-  return products;
+  return {
+    brand: clean(row['Brand-2']),
+    model: clean(row['Model-2'] || row['Model']),
+    manufacturerSku: clean(row['Manufacturer SKU']),
+    productRange: clean(row['RacksBrax Products']),
+    accessories: clean(row['Accessories']),
+    products: [product1, product2].filter(Boolean) as RecommendedProduct[],
+    pocketGuideUrl: clean(row['Download Link']),
+    brandLogoUrl: extractUrl(row['Logo']),
+  };
 }
 
-function extractVariantId(url: string) {
-  return url.match(/[?&]variant=(\d+)/)?.[1] || '';
+function makeProduct(name: string, sku: string, url: string): RecommendedProduct | null {
+  const cleanName = clean(name);
+  const cleanSku = clean(sku);
+  const cleanUrl = clean(url);
+
+  if (!cleanName && !cleanSku) {
+    return null;
+  }
+
+  return {
+    name: cleanName || cleanSku,
+    sku: cleanSku,
+    url: cleanUrl,
+    variantId: extractVariantId(cleanUrl),
+    quantity: 1,
+  };
 }
 
-function extractLogoUrl(logo: string) {
-  return logo.match(/\((https?:\/\/[^)]+)\)/)?.[1] || logo;
+function clean(value: string | undefined): string {
+  return (value || '').trim();
 }
 
-function parseCsv(csvText: string): CsvRow[] {
+function extractVariantId(url: string): string | undefined {
+  const match = url.match(/[?&]variant=(\d+)/);
+  return match?.[1];
+}
+
+function extractUrl(value: string | undefined): string {
+  const text = clean(value);
+  const match = text.match(/\((https?:\/\/[^)]+)\)/);
+  return match?.[1] || text;
+}
+
+function parseCsv(csvText: string): Record<string, string>[] {
   const rows: string[][] = [];
   let currentRow: string[] = [];
   let currentCell = '';
@@ -106,11 +122,10 @@ function parseCsv(csvText: string): CsvRow[] {
     rows.push(currentRow);
   }
 
-  const [headerRow, ...dataRows] = rows;
-  const headers = headerRow.map((header) => header.trim());
+  const headers = rows[0].map((header) => header.replace('\uFEFF', '').trim());
 
-  return dataRows.map((row) => {
-    const record: CsvRow = {};
+  return rows.slice(1).map((row) => {
+    const record: Record<string, string> = {};
 
     headers.forEach((header, index) => {
       record[header] = row[index] || '';
@@ -120,3 +135,4 @@ function parseCsv(csvText: string): CsvRow[] {
   });
 }
 
+export const loadFitmentsFromCsv = loadFitments;
