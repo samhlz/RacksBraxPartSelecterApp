@@ -18,30 +18,34 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
         </p>
       </div>
 
-      <div class="finder-card">
-        <div class="finder-grid">
-          <div>
-            <label for="brand">Awning brand</label>
-            <select id="brand">
-              <option value="">Select awning brand</option>
-            </select>
-          </div>
+      <div class="finder-panel">
+        <p class="finder-card-kicker">I have</p>
 
-          <div>
-            <label for="model">Awning model</label>
-            <select id="model" disabled>
-              <option value="">Select awning model</option>
-            </select>
-          </div>
-        </div>
-        <section id="result" class="result">
-          Select your awning to see the recommended RacksBrax hitch.
-        </section>
+        <div class="finder-card">
+          <div class="finder-grid">
+            <div>
+              <label for="brand">Brand</label>
+              <select id="brand">
+                <option value="">Select brand</option>
+              </select>
+            </div>
 
-        <div class="action-buttons">
-          <button id="buyNow" class="primary-action" disabled>Buy now</button>
-          <button id="addToCart" disabled>Add to cart</button>
-          <button id="checkItOut" disabled>Check it out</button>
+            <div>
+              <label for="model">Model</label>
+              <select id="model" disabled>
+                <option value="">Select model</option>
+              </select>
+            </div>
+          </div>
+          <section id="result" class="result">
+            Select your awning to see the recommended RacksBrax hitch.
+          </section>
+
+          <div class="action-buttons">
+            <button id="buyNow" class="primary-action" disabled>Buy now</button>
+            <button id="addToCart" class="secondary-action" disabled>Add to cart</button>
+            <button id="checkItOut" disabled>Have a closer look</button>
+          </div>
         </div>
       </div>
     </section>
@@ -54,12 +58,20 @@ const result = document.querySelector<HTMLElement>('#result')!;
 const buyNowButton = document.querySelector<HTMLButtonElement>('#buyNow')!;
 const addToCartButton = document.querySelector<HTMLButtonElement>('#addToCart')!;
 const checkItOutButton = document.querySelector<HTMLButtonElement>('#checkItOut')!;
+const actionButtonGroup = document.querySelector<HTMLElement>('.action-buttons')!;
 const prototypePage = document.querySelector<HTMLElement>('.prototype-page')!;
 
 let csvFitments: Fitment[] = [];
 let touchStartY = 0;
 
 const actionButtons = [buyNowButton, addToCartButton, checkItOutButton];
+
+const setActionsVisible = (isVisible: boolean) => {
+  actionButtonGroup.classList.toggle('is-visible', isVisible);
+  actionButtons.forEach((button) => {
+    button.disabled = !isVisible;
+  });
+};
 
 const renderProductCards = (fitment: Fitment) => {
   const products = fitment.products.length
@@ -72,7 +84,7 @@ const renderProductCards = (fitment: Fitment) => {
         <article class="product-card">
           <p class="product-label">Required product</p>
           <h4>${product.name}</h4>
-          ${product.sku ? `<p class="product-sku">SKU ${product.sku}</p>` : ''}
+          ${product.sku ? `<p class="product-sku">${product.sku}</p>` : ''}
         </article>
       `
     )
@@ -136,9 +148,7 @@ brandSelect.addEventListener('change', () => {
   modelSelect.innerHTML = '<option value="">Select model</option>';
   modelSelect.disabled = !brand;
   result.textContent = 'Select a model to see what you need.';
-  actionButtons.forEach((button) => {
-    button.disabled = true;
-  });
+  setActionsVisible(false);
 
   if (!brand) return;
 
@@ -159,7 +169,10 @@ modelSelect.addEventListener('change', () => {
   const brand = brandSelect.value;
   const model = modelSelect.value;
 
-  if (!brand || !model) return;
+  if (!brand || !model) {
+    setActionsVisible(false);
+    return;
+  }
 
   const selectedFitment = csvFitments.find(
     (fitment) => fitment.brand === brand && fitment.model === model
@@ -167,9 +180,7 @@ modelSelect.addEventListener('change', () => {
 
   if (!selectedFitment) {
     result.textContent = 'No fitment found for this awning.';
-    actionButtons.forEach((button) => {
-      button.disabled = true;
-    });
+    setActionsVisible(false);
     return;
   }
 
@@ -186,9 +197,7 @@ modelSelect.addEventListener('change', () => {
     </div>
   `;
 
-  actionButtons.forEach((button) => {
-    button.disabled = false;
-  });
+  setActionsVisible(true);
 });
 
 buyNowButton.addEventListener('click', () => {
@@ -200,5 +209,5 @@ addToCartButton.addEventListener('click', () => {
 });
 
 checkItOutButton.addEventListener('click', () => {
-  result.innerHTML += `<p class="success">Check it out simulation: product details opened.</p>`;
+  result.innerHTML += `<p class="success">Have a closer look simulation: product details opened.</p>`;
 });

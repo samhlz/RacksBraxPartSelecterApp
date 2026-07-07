@@ -45,7 +45,7 @@ body {
 }
 
 .hero-intro,
-.finder-card {
+.finder-panel {
   grid-column: 1;
   grid-row: 1;
 }
@@ -83,6 +83,28 @@ h1 {
   margin-top: 24px;
 }
 
+.finder-panel {
+  width: 100%;
+  max-width: 760px;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(18px) scale(0.98);
+  visibility: hidden;
+  transition:
+    opacity 0.7s ease,
+    transform 0.7s ease,
+    visibility 0s linear 0.7s;
+}
+
+.finder-card-kicker {
+  margin: 0 0 18px;
+  color: #ffffff;
+  font-size: clamp(44px, 7vw, 82px);
+  font-weight: 700;
+  line-height: 0.95;
+  text-align: center;
+}
+
 .finder-card {
   background: #ffffff;
   color: #1d1d1d;
@@ -94,14 +116,6 @@ h1 {
   box-sizing: border-box;
   margin: 0 auto;
   text-align: left;
-  opacity: 0;
-  pointer-events: none;
-  transform: translateY(18px) scale(0.98);
-  visibility: hidden;
-  transition:
-    opacity 0.7s ease,
-    transform 0.7s ease,
-    visibility 0s linear 0.7s;
 }
 
 .finder-revealed .hero-intro {
@@ -114,7 +128,7 @@ h1 {
     visibility 0s linear 0.7s;
 }
 
-.finder-revealed .finder-card {
+.finder-revealed .finder-panel {
   opacity: 1;
   pointer-events: auto;
   transform: translateY(0) scale(1);
@@ -178,10 +192,14 @@ select {
 }
 
 .action-buttons {
-  display: grid;
-  grid-template-columns: 1.2fr 1fr 1fr;
+  display: none;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
   margin-top: 24px;
+}
+
+.action-buttons.is-visible {
+  display: grid;
 }
 
 button {
@@ -198,7 +216,15 @@ button {
 }
 
 .primary-action {
+  grid-column: 1 / -1;
   background: #00495D;
+  padding: 22px 18px;
+  font-size: 22px;
+}
+
+.secondary-action {
+  padding: 12px 12px;
+  font-size: 14px;
 }
 
 button:disabled {
@@ -279,7 +305,7 @@ button:disabled {
   }
 
   .action-buttons {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
@@ -288,10 +314,11 @@ button:disabled {
     display: none;
   }
 
-  .finder-card {
+  .finder-panel {
     transition: none;
     opacity: 1;
     pointer-events: auto;
     transform: none;
+    visibility: visible;
   }
 }
