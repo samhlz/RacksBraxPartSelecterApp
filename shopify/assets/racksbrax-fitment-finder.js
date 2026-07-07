@@ -259,6 +259,7 @@
     var brandSelect = section.querySelector('[data-brand-select]');
     var modelSelect = section.querySelector('[data-model-select]');
     var result = section.querySelector('[data-result]');
+    var revealButton = section.querySelector('[data-reveal-finder]');
     var touchStartY = 0;
 
     function setFinderReveal(isRevealed) {
@@ -295,6 +296,19 @@
       },
       { passive: true }
     );
+
+    if (revealButton) {
+      revealButton.addEventListener('click', function () {
+        setFinderReveal(true);
+      });
+    }
+
+    section.addEventListener('click', function (event) {
+      if (!event.target.closest('.racksbrax-fitment-finder__intro')) return;
+      if (event.target.closest('a')) return;
+
+      setFinderReveal(true);
+    });
 
     if (!csvUrl || !brandSelect || !modelSelect || !result) return;
 
