@@ -256,6 +256,53 @@
   text-decoration: none;
 }
 
+.racksbrax-fitment-finder__actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.racksbrax-fitment-finder__actions button {
+  width: 100%;
+  box-sizing: border-box;
+  border: none;
+  border-radius: 12px;
+  color: #ffffff;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.racksbrax-fitment-finder__actions button:disabled {
+  background: #999999;
+  cursor: not-allowed;
+}
+
+.racksbrax-fitment-finder__primary-action {
+  grid-column: 1 / -1;
+  padding: 20px 18px;
+  background: #00495D;
+  font-size: 20px;
+}
+
+.racksbrax-fitment-finder__secondary-action {
+  padding: 13px 12px;
+  background: #111111;
+  font-size: 15px;
+}
+
+.racksbrax-fitment-finder__action-status {
+  min-height: 20px;
+  margin: 10px 0 0;
+  color: #00495D;
+  font-weight: 700;
+}
+
+.racksbrax-fitment-finder__action-status.is-error {
+  color: #b42318;
+}
+
 .racksbrax-fitment-finder__missing-link {
   margin: 14px 0 0;
   color: #666666;
@@ -276,6 +323,10 @@
   }
 
   .racksbrax-fitment-finder__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .racksbrax-fitment-finder__actions {
     grid-template-columns: 1fr;
   }
 }

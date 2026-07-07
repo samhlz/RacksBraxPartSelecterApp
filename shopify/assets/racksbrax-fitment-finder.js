@@ -211,6 +211,108 @@
       .join('');
   }
 
+  function cartItemsForFitment(fitment) {
+    return fitment.products
+      .filter(function (product) {
+        return product.variantId;
+      })
+      .map(function (product) {
+        return {
+          id: Number(product.variantId),
+          quantity: 1,
+        };
+      });
+  }
+
+  function firstProductUrl(fitment) {
+    var product = fitment.products.find(function (item) {
+      return item.url;
+    });
+
+    return product ? product.url : '';
+  }
+
+  function setActionStatus(result, message, isError) {
+    var status = result.querySelector('[data-action-status]');
+
+    if (!status) return;
+
+    status.textContent = message;
+    status.classList.toggle('is-error', Boolean(isError));
+  }
+
+  function addFitmentToCart(fitment) {
+    var items = cartItemsForFitment(fitment);
+
+    if (!items.length) {
+      return Promise.reject(new Error('No Shopify variant IDs available for this setup.'));
+    }
+
+    return fetch('/cart/add.js', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      },
+      body: JSON.stringify({ items: items }),
+    }).then(function (response) {
+      if (!response.ok) {
+        throw new Error('Could not add this setup to cart.');
+      }
+
+      return response.json();
+    });
+  }
+
+  function attachActionButtons(result, fitment) {
+    var buyNowButton = result.querySelector('[data-buy-now]');
+    var addToCartButton = result.querySelector('[data-add-to-cart]');
+    var closerLookButton = result.querySelector('[data-closer-look]');
+    var productUrl = firstProductUrl(fitment);
+
+    if (closerLookButton) {
+      closerLookButton.disabled = !productUrl;
+      closerLookButton.addEventListener('click', function () {
+        if (productUrl) {
+          window.location.href = productUrl;
+        }
+      });
+    }
+
+    if (addToCartButton) {
+      addToCartButton.addEventListener('click', function () {
+        addToCartButton.disabled = true;
+        setActionStatus(result, 'Adding setup to cart...', false);
+
+        addFitmentToCart(fitment)
+          .then(function () {
+            setActionStatus(result, 'Added to cart.', false);
+            window.location.href = '/cart';
+          })
+          .catch(function (error) {
+            setActionStatus(result, error.message, true);
+            addToCartButton.disabled = false;
+          });
+      });
+    }
+
+    if (buyNowButton) {
+      buyNowButton.addEventListener('click', function () {
+        buyNowButton.disabled = true;
+        setActionStatus(result, 'Preparing checkout...', false);
+
+        addFitmentToCart(fitment)
+          .then(function () {
+            window.location.href = '/checkout';
+          })
+          .catch(function (error) {
+            setActionStatus(result, error.message, true);
+            buyNowButton.disabled = false;
+          });
+      });
+    }
+  }
+
   function renderUnavailableResult(result, fitment) {
     result.innerHTML = [
       '<div class="racksbrax-fitment-finder__result-header">',
@@ -240,6 +342,12 @@
       '<div class="racksbrax-fitment-finder__product-results">',
       renderProductCards(fitment),
       '</div>',
+      '<div class="racksbrax-fitment-finder__actions">',
+      '<button class="racksbrax-fitment-finder__primary-action" type="button" data-buy-now>Buy now</button>',
+      '<button class="racksbrax-fitment-finder__secondary-action" type="button" data-add-to-cart>Add to cart</button>',
+      '<button class="racksbrax-fitment-finder__secondary-action" type="button" data-closer-look>Have a closer look</button>',
+      '</div>',
+      '<p class="racksbrax-fitment-finder__action-status" data-action-status></p>',
       fitment.pocketGuideUrl
         ? '<a class="racksbrax-fitment-finder__pocket-guide" href="' +
           fitment.pocketGuideUrl +
@@ -248,6 +356,7 @@
     ].join('');
 
     hydrateProductPrices(result, fitment);
+    attachActionButtons(result, fitment);
   }
 
   function initFinder(section) {
