@@ -316,12 +316,13 @@
     if (buyNowButton) {
       buyNowButton.addEventListener('click', function () {
         buyNowButton.disabled = true;
-        setActionStatus(result, 'Preparing checkout...', false);
+        setActionStatus(result, 'Adding setup to cart...', false);
 
         ensureProductsReady(fitment)
           .then(addFitmentToCart)
           .then(function () {
-            window.location.href = '/checkout';
+            setActionStatus(result, 'Added to cart.', false);
+            window.location.href = '/cart';
           })
           .catch(function (error) {
             setActionStatus(result, error.message, true);
