@@ -40,8 +40,21 @@
     text-align: center;
   }
 
+  .racksbrax-fitment-finder__intro,
+  .racksbrax-fitment-finder__finder-panel {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
   .racksbrax-fitment-finder__intro {
     max-width: 820px;
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    visibility: visible;
+    transition:
+      opacity 0.7s ease,
+      transform 0.7s ease,
+      visibility 0s linear 0s;
   }
 
   .racksbrax-fitment-finder__eyebrow {
@@ -69,12 +82,46 @@
   .racksbrax-fitment-finder__card-kicker {
     width: 100%;
     max-width: 760px;
-    margin: 36px auto 18px;
+    margin: 0 auto 18px;
     color: #ffffff;
     font-size: clamp(44px, 7vw, 82px);
     font-weight: 700;
     line-height: 0.95;
     text-align: center;
+  }
+
+  .racksbrax-fitment-finder__finder-panel {
+    width: 100%;
+    max-width: 760px;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(18px) scale(0.98);
+    visibility: hidden;
+    transition:
+      opacity 0.7s ease,
+      transform 0.7s ease,
+      visibility 0s linear 0.7s;
+  }
+
+  .racksbrax-fitment-finder.is-finder-revealed .racksbrax-fitment-finder__intro {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-18px) scale(0.98);
+    transition:
+      opacity 0.7s ease,
+      transform 0.7s ease,
+      visibility 0s linear 0.7s;
+  }
+
+  .racksbrax-fitment-finder.is-finder-revealed .racksbrax-fitment-finder__finder-panel {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0) scale(1);
+    visibility: visible;
+    transition:
+      opacity 0.7s ease,
+      transform 0.7s ease,
+      visibility 0s linear 0s;
   }
 
   .racksbrax-fitment-finder__card {
@@ -202,7 +249,7 @@
 
   @media (max-width: 820px) {
     .racksbrax-fitment-finder__inner {
-      padding-top: 72px;
+      padding-top: 96px;
     }
 
     .racksbrax-fitment-finder h1 {
@@ -211,6 +258,19 @@
 
     .racksbrax-fitment-finder__grid {
       grid-template-columns: 1fr;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .racksbrax-fitment-finder__intro {
+      display: none;
+    }
+
+    .racksbrax-fitment-finder__finder-panel {
+      opacity: 1;
+      pointer-events: auto;
+      transform: none;
+      visibility: visible;
     }
   }
 </style>
@@ -231,27 +291,29 @@
       <p>Tell us what awning you have.</p>
     </div>
 
-    <p class="racksbrax-fitment-finder__card-kicker">I have</p>
+    <div class="racksbrax-fitment-finder__finder-panel">
+      <p class="racksbrax-fitment-finder__card-kicker">I have</p>
 
-    <div class="racksbrax-fitment-finder__card">
-      <div class="racksbrax-fitment-finder__grid">
-        <div>
-          <label for="RacksBraxBrand-{{ section.id }}">Brand</label>
-          <select id="RacksBraxBrand-{{ section.id }}" data-brand-select>
-            <option value="">Select brand</option>
-          </select>
+      <div class="racksbrax-fitment-finder__card">
+        <div class="racksbrax-fitment-finder__grid">
+          <div>
+            <label for="RacksBraxBrand-{{ section.id }}">Brand</label>
+            <select id="RacksBraxBrand-{{ section.id }}" data-brand-select>
+              <option value="">Select brand</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="RacksBraxModel-{{ section.id }}">Model</label>
+            <select id="RacksBraxModel-{{ section.id }}" data-model-select disabled>
+              <option value="">Select model</option>
+            </select>
+          </div>
         </div>
 
-        <div>
-          <label for="RacksBraxModel-{{ section.id }}">Model</label>
-          <select id="RacksBraxModel-{{ section.id }}" data-model-select disabled>
-            <option value="">Select model</option>
-          </select>
+        <div class="racksbrax-fitment-finder__result" data-result>
+          Tell us what awning you have to see your recommended RacksBrax setup.
         </div>
-      </div>
-
-      <div class="racksbrax-fitment-finder__result" data-result>
-        Tell us what awning you have to see your recommended RacksBrax setup.
       </div>
     </div>
   </div>

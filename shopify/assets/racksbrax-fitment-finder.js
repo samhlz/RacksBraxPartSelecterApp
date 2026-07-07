@@ -1,5 +1,5 @@
 (function () {
-  var unavailableMessage = "we don't fitt. :(... yet 👀";
+  var unavailableMessage = "we don't fitt. :(... yet \uD83D\uDC40";
   var priceCache = {};
 
   function parseCsv(csvText) {
@@ -51,7 +51,7 @@
 
     var headerRow = rows.shift() || [];
     var headers = headerRow.map(function (header) {
-      return header.trim();
+      return header.replace('\uFEFF', '').trim();
     });
 
     return rows.map(function (row) {
@@ -75,14 +75,15 @@
 
     [1, 2].forEach(function (productNumber) {
       var name = (row['Product' + productNumber] || '').trim();
+      var sku = (row['Product' + productNumber + ' SKU'] || '').trim();
 
-      if (!name) return;
+      if (!name && !sku) return;
 
       var url = (row['Product' + productNumber + ' URL'] || '').trim();
 
       products.push({
-        name: name,
-        sku: (row['Product' + productNumber + ' SKU'] || '').trim(),
+        name: name || sku,
+        sku: sku,
         url: url,
         variantId: extractVariantId(url),
       });
@@ -94,7 +95,7 @@
   function mapFitment(row) {
     return {
       brand: (row['Brand-2'] || '').trim(),
-      model: (row.Model || '').trim(),
+      model: (row['Model-2'] || row.Model || '').trim(),
       modelVariant: (row['Model-2'] || '').trim(),
       manufacturerSku: (row['Manufacturer SKU'] || '').trim(),
       productRange: (row['RacksBrax Products'] || '').trim(),
@@ -250,10 +251,50 @@
   }
 
   function initFinder(section) {
+    if (section.dataset.racksbraxInitialized === 'true') return;
+
+    section.dataset.racksbraxInitialized = 'true';
+
     var csvUrl = section.dataset.fitmentsUrl;
     var brandSelect = section.querySelector('[data-brand-select]');
     var modelSelect = section.querySelector('[data-model-select]');
     var result = section.querySelector('[data-result]');
+    var touchStartY = 0;
+
+    function setFinderReveal(isRevealed) {
+      section.classList.toggle('is-finder-revealed', isRevealed);
+    }
+
+    window.addEventListener(
+      'wheel',
+      function (event) {
+        if (Math.abs(event.deltaY) < 8) return;
+
+        setFinderReveal(event.deltaY > 0);
+      },
+      { passive: true }
+    );
+
+    window.addEventListener(
+      'touchstart',
+      function (event) {
+        touchStartY = event.touches[0] ? event.touches[0].clientY : 0;
+      },
+      { passive: true }
+    );
+
+    window.addEventListener(
+      'touchmove',
+      function (event) {
+        var currentY = event.touches[0] ? event.touches[0].clientY : touchStartY;
+        var deltaY = touchStartY - currentY;
+
+        if (Math.abs(deltaY) < 24) return;
+
+        setFinderReveal(deltaY > 0);
+      },
+      { passive: true }
+    );
 
     if (!csvUrl || !brandSelect || !modelSelect || !result) return;
 
@@ -279,6 +320,11 @@
             })
           )
         ).sort();
+
+        if (!brands.length) {
+          result.textContent = 'No awnings loaded. Check that fitments_product_columns_with_urls.csv is uploaded to theme assets.';
+          return;
+        }
 
         setOptions(brandSelect, 'Select brand', brands);
 
@@ -328,7 +374,7 @@
       })
       .catch(function (error) {
         console.error(error);
-        result.textContent = 'Could not load fitment data.';
+        result.textContent = 'Could not load fitment data. Check that fitments_product_columns_with_urls.csv is uploaded to theme assets.';
       });
   }
 
