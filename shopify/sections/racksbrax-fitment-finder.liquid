@@ -204,13 +204,6 @@
     color: #4d4d4d;
   }
 
-  .racksbrax-fitment-finder__selected-awning {
-    margin: 16px 0;
-    padding: 12px 14px;
-    border-radius: 10px;
-    background: #ffffff;
-  }
-
   .racksbrax-fitment-finder__product-results {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -292,7 +285,7 @@
   .racksbrax-fitment-finder__primary-action {
     grid-column: 1 / -1;
     padding: 20px 18px;
-    background: #00495D;
+    background: #B8AB17;
     font-size: 20px;
   }
 
@@ -361,6 +354,23 @@
   class="racksbrax-fitment-finder"
   data-racksbrax-fitment-finder
   data-fitments-url="{{ 'fitments_product_columns_with_urls.csv' | asset_url }}"
+  data-unavailable-message="{{ section.settings.unavailable_message | escape }}"
+  data-recommendation-heading="{{ section.settings.recommendation_heading | escape }}"
+  data-recommendation-copy="{{ section.settings.recommendation_copy | escape }}"
+  data-buy-now-label="{{ section.settings.buy_now_label | escape }}"
+  data-add-to-cart-label="{{ section.settings.add_to_cart_label | escape }}"
+  data-brand-placeholder="{{ section.settings.brand_placeholder | escape }}"
+  data-model-placeholder="{{ section.settings.model_placeholder | escape }}"
+  data-initial-result="{{ section.settings.initial_result | escape }}"
+  data-model-prompt="{{ section.settings.model_prompt | escape }}"
+  data-no-awnings-message="{{ section.settings.no_awnings_message | escape }}"
+  data-load-error-message="{{ section.settings.load_error_message | escape }}"
+  data-product-label="{{ section.settings.product_label | escape }}"
+  data-loading-price-label="{{ section.settings.loading_price_label | escape }}"
+  data-price-coming-soon-label="{{ section.settings.price_coming_soon_label | escape }}"
+  data-missing-link-label="{{ section.settings.missing_link_label | escape }}"
+  data-adding-to-cart-message="{{ section.settings.adding_to_cart_message | escape }}"
+  data-added-to-cart-message="{{ section.settings.added_to_cart_message | escape }}"
 >
   <a class="racksbrax-fitment-finder__continue" href="{{ section.settings.continue_url }}">
     {{ section.settings.continue_label }}
@@ -382,22 +392,22 @@
       <div class="racksbrax-fitment-finder__card">
         <div class="racksbrax-fitment-finder__grid">
           <div>
-            <label for="RacksBraxBrand-{{ section.id }}">Brand</label>
+            <label for="RacksBraxBrand-{{ section.id }}">{{ section.settings.brand_label | escape }}</label>
             <select id="RacksBraxBrand-{{ section.id }}" data-brand-select>
-              <option value="">Select brand</option>
+              <option value="">{{ section.settings.brand_placeholder | escape }}</option>
             </select>
           </div>
 
           <div>
-            <label for="RacksBraxModel-{{ section.id }}">Model</label>
+            <label for="RacksBraxModel-{{ section.id }}">{{ section.settings.model_label | escape }}</label>
             <select id="RacksBraxModel-{{ section.id }}" data-model-select disabled>
-              <option value="">Select model</option>
+              <option value="">{{ section.settings.model_placeholder | escape }}</option>
             </select>
           </div>
         </div>
 
         <div class="racksbrax-fitment-finder__result" data-result>
-          Tell us what awning you have to see your recommended RacksBrax setup.
+          {{ section.settings.initial_result | escape }}
         </div>
       </div>
     </div>
@@ -440,6 +450,120 @@
       "id": "finder_kicker",
       "label": "Finder heading",
       "default": "I have"
+    },
+    {
+      "type": "text",
+      "id": "brand_label",
+      "label": "Brand label",
+      "default": "Brand"
+    },
+    {
+      "type": "text",
+      "id": "brand_placeholder",
+      "label": "Brand placeholder",
+      "default": "Select brand"
+    },
+    {
+      "type": "text",
+      "id": "model_label",
+      "label": "Model label",
+      "default": "Model"
+    },
+    {
+      "type": "text",
+      "id": "model_placeholder",
+      "label": "Model placeholder",
+      "default": "Select model"
+    },
+    {
+      "type": "text",
+      "id": "initial_result",
+      "label": "Initial result text",
+      "default": "Tell us what awning you have to see your recommended RacksBrax setup."
+    },
+    {
+      "type": "text",
+      "id": "model_prompt",
+      "label": "Model prompt text",
+      "default": "Select a model to see what you need."
+    },
+    {
+      "type": "text",
+      "id": "recommendation_heading",
+      "label": "Recommendation heading",
+      "default": "Your recommended RacksBrax setup"
+    },
+    {
+      "type": "text",
+      "id": "recommendation_copy",
+      "label": "Recommendation copy",
+      "default": "Based on your awning selection, these are the parts you need."
+    },
+    {
+      "type": "text",
+      "id": "product_label",
+      "label": "Product card label",
+      "default": "Required product"
+    },
+    {
+      "type": "text",
+      "id": "loading_price_label",
+      "label": "Loading price label",
+      "default": "Loading price"
+    },
+    {
+      "type": "text",
+      "id": "price_coming_soon_label",
+      "label": "Price unavailable label",
+      "default": "Price coming soon"
+    },
+    {
+      "type": "text",
+      "id": "missing_link_label",
+      "label": "Missing product link label",
+      "default": "Product page coming soon"
+    },
+    {
+      "type": "text",
+      "id": "buy_now_label",
+      "label": "Buy now button label",
+      "default": "Buy now"
+    },
+    {
+      "type": "text",
+      "id": "add_to_cart_label",
+      "label": "Add to cart button label",
+      "default": "Add to cart"
+    },
+    {
+      "type": "text",
+      "id": "adding_to_cart_message",
+      "label": "Adding to cart message",
+      "default": "Adding setup to cart..."
+    },
+    {
+      "type": "text",
+      "id": "added_to_cart_message",
+      "label": "Added to cart message",
+      "default": "Added to cart."
+    },
+    {
+      "type": "text",
+      "id": "unavailable_message",
+      "label": "Unavailable fitment message",
+      "default": "we don't fitt. :(... yet \uD83D\uDC40"
+    },
+    {
+      "type": "text",
+      "id": "no_awnings_message",
+      "label": "No awnings loaded message",
+      "default": "No awnings loaded. Check that fitments_product_columns_with_urls.csv is uploaded to theme assets."
+    },
+    {
+      "type": "text",
+      "id": "load_error_message",
+      "label": "Load error message",
+      "default": "Could not load fitment data. Check that fitments_product_columns_with_urls.csv is uploaded to theme assets."
     },
     {
       "type": "text",

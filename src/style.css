@@ -83,6 +83,21 @@ h1 {
   margin-top: 24px;
 }
 
+.start-button {
+  display: inline-flex;
+  width: auto;
+  align-items: center;
+  justify-content: center;
+  margin-top: 32px;
+  padding: 16px 28px;
+  border: none;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #00495D;
+  font-weight: 700;
+  cursor: pointer;
+}
+
 .finder-panel {
   width: 100%;
   max-width: 760px;
@@ -217,7 +232,7 @@ button {
 
 .primary-action {
   grid-column: 1 / -1;
-  background: #00495D;
+  background: #B8AB17;
   padding: 22px 18px;
   font-size: 22px;
 }
@@ -248,13 +263,6 @@ button:disabled {
 .recommendation-header p {
   margin: 8px 0 0;
   color: #4d4d4d;
-}
-
-.selected-awning {
-  margin: 16px 0;
-  padding: 12px 14px;
-  border-radius: 10px;
-  background: #ffffff;
 }
 
 .product-results {

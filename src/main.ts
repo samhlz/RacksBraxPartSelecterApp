@@ -16,6 +16,7 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
         <p class="hero-copy">
           Tell us what awning you have and we'll show the RacksBrax hitch system you need.
         </p>
+        <button class="start-button" type="button" id="revealFinder">Find my awning</button>
       </div>
 
       <div class="finder-panel">
@@ -58,6 +59,7 @@ const result = document.querySelector<HTMLElement>('#result')!;
 const buyNowButton = document.querySelector<HTMLButtonElement>('#buyNow')!;
 const addToCartButton = document.querySelector<HTMLButtonElement>('#addToCart')!;
 const checkItOutButton = document.querySelector<HTMLButtonElement>('#checkItOut')!;
+const revealFinderButton = document.querySelector<HTMLButtonElement>('#revealFinder')!;
 const actionButtonGroup = document.querySelector<HTMLElement>('.action-buttons')!;
 const prototypePage = document.querySelector<HTMLElement>('.prototype-page')!;
 
@@ -100,11 +102,10 @@ const isUnavailableFitment = (fitment: Fitment) => {
   });
 };
 
-const renderUnavailableFitment = (fitment: Fitment) => {
+const renderUnavailableFitment = () => {
   result.innerHTML = `
     <div class="recommendation-header">
       <h3>${unavailableMessage}</h3>
-      <p>Selected awning: ${fitment.brand} ${fitment.model}</p>
     </div>
   `;
   setActionsVisible(false);
@@ -204,6 +205,10 @@ window.addEventListener(
   { passive: true }
 );
 
+revealFinderButton.addEventListener('click', () => {
+  setFinderReveal(true);
+});
+
 loadFitmentsFromCsv()
   .then((loadedFitments) => {
     csvFitments = loadedFitments;
@@ -264,7 +269,7 @@ modelSelect.addEventListener('change', () => {
   }
 
   if (isUnavailableFitment(selectedFitment)) {
-    renderUnavailableFitment(selectedFitment);
+    renderUnavailableFitment();
     return;
   }
 
@@ -273,8 +278,6 @@ modelSelect.addEventListener('change', () => {
       <h3>Your recommended RacksBrax setup</h3>
       <p>Based on your awning selection, these are the parts you need.</p>
     </div>
-
-    <p class="selected-awning"><strong>Selected awning:</strong> ${selectedFitment.brand} ${selectedFitment.model}</p>
 
     <div class="product-results">
       ${renderProductCards(selectedFitment)}
@@ -286,7 +289,7 @@ modelSelect.addEventListener('change', () => {
 });
 
 buyNowButton.addEventListener('click', () => {
-  result.innerHTML += `<p class="success">Buy now simulation: checkout started.</p>`;
+  result.innerHTML += `<p class="success">Buy now simulation: complete kit added, checkout started.</p>`;
 });
 
 addToCartButton.addEventListener('click', () => {

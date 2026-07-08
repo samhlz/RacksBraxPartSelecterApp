@@ -203,13 +203,6 @@
   color: #4d4d4d;
 }
 
-.racksbrax-fitment-finder__selected-awning {
-  margin: 16px 0;
-  padding: 12px 14px;
-  border-radius: 10px;
-  background: #ffffff;
-}
-
 .racksbrax-fitment-finder__product-results {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -291,7 +284,7 @@
 .racksbrax-fitment-finder__primary-action {
   grid-column: 1 / -1;
   padding: 20px 18px;
-  background: #00495D;
+  background: #B8AB17;
   font-size: 20px;
 }
 

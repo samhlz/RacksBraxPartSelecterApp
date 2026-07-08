@@ -1,6 +1,35 @@
 (function () {
-  var unavailableMessage = "we don't fitt. :(... yet \uD83D\uDC40";
+  var defaultCopy = {
+    unavailableMessage: "we don't fitt. :(... yet \uD83D\uDC40",
+    recommendationHeading: 'Your recommended RacksBrax setup',
+    recommendationCopy: 'Based on your awning selection, these are the parts you need.',
+    buyNowLabel: 'Buy now',
+    addToCartLabel: 'Add to cart',
+    brandPlaceholder: 'Select brand',
+    modelPlaceholder: 'Select model',
+    initialResult: 'Tell us what awning you have to see your recommended RacksBrax setup.',
+    modelPrompt: 'Select a model to see what you need.',
+    noAwningsMessage: 'No awnings loaded. Check that fitments_product_columns_with_urls.csv is uploaded to theme assets.',
+    loadErrorMessage: 'Could not load fitment data. Check that fitments_product_columns_with_urls.csv is uploaded to theme assets.',
+    productLabel: 'Required product',
+    loadingPriceLabel: 'Loading price',
+    priceComingSoonLabel: 'Price coming soon',
+    missingLinkLabel: 'Product page coming soon',
+    addingToCartMessage: 'Adding setup to cart...',
+    addedToCartMessage: 'Added to cart.',
+  };
   var priceCache = {};
+
+  function copyValue(section, key) {
+    return section.dataset[key] || defaultCopy[key];
+  }
+
+  function getCopy(section) {
+    return Object.keys(defaultCopy).reduce(function (copy, key) {
+      copy[key] = copyValue(section, key);
+      return copy;
+    }, {});
+  }
 
   function parseCsv(csvText) {
     var rows = [];
@@ -189,10 +218,10 @@
     return priceCache[cacheKey];
   }
 
-  function hydrateProductPrices(result, fitment) {
+  function hydrateProductPrices(result, fitment, copy) {
     Promise.all(fitment.products.map(loadProductPrice)).then(function (prices) {
       prices.forEach(function (productDetails, index) {
-        fitment.products[index].price = productDetails.price || 'Price coming soon';
+        fitment.products[index].price = productDetails.price || copy.priceComingSoonLabel;
         fitment.products[index].imageUrl = productDetails.imageUrl || fitment.products[index].imageUrl;
         fitment.products[index].variantId = fitment.products[index].variantId || productDetails.variantId || '';
       });
@@ -200,12 +229,12 @@
       var productResults = result.querySelector('.racksbrax-fitment-finder__product-results');
 
       if (productResults) {
-        productResults.innerHTML = renderProductCards(fitment);
+        productResults.innerHTML = renderProductCards(fitment, copy);
       }
     });
   }
 
-  function renderProductCards(fitment) {
+  function renderProductCards(fitment, copy) {
     return fitment.products
       .map(function (product) {
         var productName = escapeHtml(product.name);
@@ -224,10 +253,10 @@
               '" loading="lazy">'
             : '',
           '<div class="racksbrax-fitment-finder__product-card-copy">',
-          '<p class="racksbrax-fitment-finder__product-label">Required product</p>',
+          '<p class="racksbrax-fitment-finder__product-label">' + escapeHtml(copy.productLabel) + '</p>',
           '<h4>' + productName + '</h4>',
-          '<p class="racksbrax-fitment-finder__price">' + escapeHtml(product.price || 'Loading price') + '</p>',
-          !product.url ? '<p class="racksbrax-fitment-finder__missing-link">Product page coming soon</p>' : '',
+          '<p class="racksbrax-fitment-finder__price">' + escapeHtml(product.price || copy.loadingPriceLabel) + '</p>',
+          !product.url ? '<p class="racksbrax-fitment-finder__missing-link">' + escapeHtml(copy.missingLinkLabel) + '</p>' : '',
           '</div>',
           '</' + tagName + '>',
         ].join('');
@@ -292,19 +321,19 @@
     });
   }
 
-  function attachActionButtons(result, fitment) {
+  function attachActionButtons(result, fitment, copy) {
     var buyNowButton = result.querySelector('[data-buy-now]');
     var addToCartButton = result.querySelector('[data-add-to-cart]');
     if (addToCartButton) {
       addToCartButton.addEventListener('click', function () {
         addToCartButton.disabled = true;
-        setActionStatus(result, 'Adding setup to cart...', false);
+        setActionStatus(result, copy.addingToCartMessage, false);
 
         ensureProductsReady(fitment)
           .then(addFitmentToCart)
           .then(function () {
-            setActionStatus(result, 'Added to cart.', false);
-            window.location.href = '/cart';
+            setActionStatus(result, copy.addedToCartMessage, false);
+            window.location.href = '/checkout';
           })
           .catch(function (error) {
             setActionStatus(result, error.message, true);
@@ -316,12 +345,12 @@
     if (buyNowButton) {
       buyNowButton.addEventListener('click', function () {
         buyNowButton.disabled = true;
-        setActionStatus(result, 'Adding setup to cart...', false);
+        setActionStatus(result, copy.addingToCartMessage, false);
 
         ensureProductsReady(fitment)
           .then(addFitmentToCart)
           .then(function () {
-            setActionStatus(result, 'Added to cart.', false);
+            setActionStatus(result, copy.addedToCartMessage, false);
             window.location.href = '/cart';
           })
           .catch(function (error) {
@@ -332,44 +361,34 @@
     }
   }
 
-  function renderUnavailableResult(result, fitment) {
+  function renderUnavailableResult(result, copy) {
     result.innerHTML = [
       '<div class="racksbrax-fitment-finder__result-header">',
       '<h3>',
-      unavailableMessage,
+      escapeHtml(copy.unavailableMessage),
       '</h3>',
-      '<p>Selected awning: ',
-      escapeHtml(fitment.brand),
-      ' ',
-      escapeHtml(fitment.model),
-      '</p>',
       '</div>',
     ].join('');
   }
 
-  function renderResult(result, fitment) {
+  function renderResult(result, fitment, copy) {
     result.innerHTML = [
       '<div class="racksbrax-fitment-finder__result-header">',
-      '<h3>Your recommended RacksBrax setup</h3>',
-      '<p>Based on your awning selection, these are the parts you need.</p>',
+      '<h3>' + escapeHtml(copy.recommendationHeading) + '</h3>',
+      '<p>' + escapeHtml(copy.recommendationCopy) + '</p>',
       '</div>',
-      '<p class="racksbrax-fitment-finder__selected-awning"><strong>Selected awning:</strong> ',
-      escapeHtml(fitment.brand),
-      ' ',
-      escapeHtml(fitment.model),
-      '</p>',
       '<div class="racksbrax-fitment-finder__product-results">',
-      renderProductCards(fitment),
+      renderProductCards(fitment, copy),
       '</div>',
       '<div class="racksbrax-fitment-finder__actions">',
-      '<button class="racksbrax-fitment-finder__primary-action" type="button" data-buy-now>Buy now</button>',
-      '<button class="racksbrax-fitment-finder__secondary-action" type="button" data-add-to-cart>Add to cart</button>',
+      '<button class="racksbrax-fitment-finder__primary-action" type="button" data-buy-now>' + escapeHtml(copy.buyNowLabel) + '</button>',
+      '<button class="racksbrax-fitment-finder__secondary-action" type="button" data-add-to-cart>' + escapeHtml(copy.addToCartLabel) + '</button>',
       '</div>',
       '<p class="racksbrax-fitment-finder__action-status" data-action-status></p>',
     ].join('');
 
-    hydrateProductPrices(result, fitment);
-    attachActionButtons(result, fitment);
+    hydrateProductPrices(result, fitment, copy);
+    attachActionButtons(result, fitment, copy);
   }
 
   function initFinder(section) {
@@ -382,6 +401,7 @@
     var modelSelect = section.querySelector('[data-model-select]');
     var result = section.querySelector('[data-result]');
     var revealButton = section.querySelector('[data-reveal-finder]');
+    var copy = getCopy(section);
     var touchStartY = 0;
 
     function setFinderReveal(isRevealed) {
@@ -458,20 +478,20 @@
         ).sort();
 
         if (!brands.length) {
-          result.textContent = 'No awnings loaded. Check that fitments_product_columns_with_urls.csv is uploaded to theme assets.';
+          result.textContent = copy.noAwningsMessage;
           return;
         }
 
-        setOptions(brandSelect, 'Select brand', brands);
+        setOptions(brandSelect, copy.brandPlaceholder, brands);
 
         brandSelect.addEventListener('change', function () {
           var brand = brandSelect.value;
 
           modelSelect.disabled = !brand;
-          setOptions(modelSelect, 'Select model', []);
+          setOptions(modelSelect, copy.modelPlaceholder, []);
           result.textContent = brand
-            ? 'Select a model to see what you need.'
-            : 'Tell us what awning you have to see your recommended RacksBrax setup.';
+            ? copy.modelPrompt
+            : copy.initialResult;
 
           if (!brand) return;
 
@@ -487,7 +507,7 @@
             )
           ).sort();
 
-          setOptions(modelSelect, 'Select model', models);
+          setOptions(modelSelect, copy.modelPlaceholder, models);
         });
 
         modelSelect.addEventListener('change', function () {
@@ -496,21 +516,21 @@
           });
 
           if (!selectedFitment) {
-            result.textContent = unavailableMessage;
+            result.textContent = copy.unavailableMessage;
             return;
           }
 
           if (isUnavailableFitment(selectedFitment)) {
-            renderUnavailableResult(result, selectedFitment);
+            renderUnavailableResult(result, copy);
             return;
           }
 
-          renderResult(result, selectedFitment);
+          renderResult(result, selectedFitment, copy);
         });
       })
       .catch(function (error) {
         console.error(error);
-        result.textContent = 'Could not load fitment data. Check that fitments_product_columns_with_urls.csv is uploaded to theme assets.';
+        result.textContent = copy.loadErrorMessage;
       });
   }
 
