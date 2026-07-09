@@ -3,7 +3,7 @@
     unavailableMessage: "we don't fitt. :(... yet \uD83D\uDC40",
     recommendationHeading: 'Your recommended RacksBrax setup',
     recommendationCopy: 'Based on your awning selection, these are the parts you need.',
-    recommendationTemplate: "Here's what you need for your {model}.",
+    recommendationTemplate: "here's what you need for your {model}.",
     buyNowLabel: 'Buy now',
     addToCartLabel: 'Add to cart',
     brandPlaceholder: 'Select brand',
@@ -426,10 +426,29 @@
     ].filter(Boolean).join('\n');
   }
 
+  function titleCase(value) {
+    return String(value || '').toLowerCase().replace(/\S+/g, function (word) {
+      return word.charAt(0).toUpperCase() + word.slice(1);
+    });
+  }
+
+  function formattedModelName(fitment) {
+    var model = fitment.model || '';
+    var brand = fitment.brand || '';
+
+    if (!brand || model.toLowerCase().indexOf(brand.toLowerCase()) !== 0) {
+      return titleCase(model);
+    }
+
+    return model.slice(0, brand.length).toUpperCase() + titleCase(model.slice(brand.length));
+  }
+
   function recommendationHeading(fitment, copy) {
-    return (copy.recommendationTemplate
-      .replace('{brand}', fitment.brand)
-      .replace('{model}', fitment.model)).toLowerCase();
+    var heading = copy.recommendationTemplate
+      .replace('{brand}', fitment.brand.toUpperCase())
+      .replace('{model}', formattedModelName(fitment));
+
+    return heading.charAt(0).toLowerCase() + heading.slice(1);
   }
 
   function renderEmailReminderForm(fitment, copy) {

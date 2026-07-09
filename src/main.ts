@@ -206,6 +206,19 @@ const hydrateProductPrices = async (fitment: Fitment, version: number) => {
   }
 };
 
+const titleCase = (value: string) =>
+  value.toLowerCase().replace(/\S+/g, (word) => word.charAt(0).toUpperCase() + word.slice(1));
+
+const formattedModelName = (fitment: Fitment) => {
+  if (!fitment.brand || !fitment.model.toLowerCase().startsWith(fitment.brand.toLowerCase())) {
+    return titleCase(fitment.model);
+  }
+
+  return `${fitment.model.slice(0, fitment.brand.length).toUpperCase()}${titleCase(
+    fitment.model.slice(fitment.brand.length)
+  )}`;
+};
+
 loadFitmentsFromCsv()
   .then((loadedFitments) => {
     csvFitments = loadedFitments;
@@ -283,7 +296,7 @@ modelSelect.addEventListener('change', () => {
 
   result.innerHTML = `
     <div class="recommendation-header">
-      <h3>${`Here's what you need for your ${selectedFitment.model}.`.toLowerCase()}</h3>
+      <h3>here's what you need for your ${formattedModelName(selectedFitment)}.</h3>
     </div>
 
     ${
