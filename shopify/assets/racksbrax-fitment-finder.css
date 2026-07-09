@@ -100,6 +100,56 @@
   text-overflow: ellipsis;
 }
 
+.racksbrax-fitment-finder__missing-brand-form {
+  margin-top: 20px;
+  padding: 18px;
+  border-radius: 16px;
+  background: #f3f3f3;
+}
+
+.racksbrax-fitment-finder__missing-brand-form[hidden] {
+  display: none;
+}
+
+.racksbrax-fitment-finder__missing-brand-form p {
+  margin: 0 0 16px;
+  color: #4d4d4d;
+}
+
+.racksbrax-fitment-finder__missing-brand-form input,
+.racksbrax-fitment-finder__missing-brand-form textarea {
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 14px;
+  padding: 14px;
+  border: 1px solid #bbb;
+  border-radius: 12px;
+  background: #ffffff;
+  font: inherit;
+}
+
+.racksbrax-fitment-finder__missing-brand-form button {
+  width: 100%;
+  padding: 14px 18px;
+  border: none;
+  border-radius: 12px;
+  background: #B8AB17;
+  color: #ffffff;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.racksbrax-fitment-finder__form-status {
+  margin-top: 12px;
+  color: #00495D;
+  font-weight: 700;
+}
+
+.racksbrax-fitment-finder__form-status.is-error {
+  color: #b42318;
+}
+
 .racksbrax-fitment-finder__result {
   margin-top: 24px;
   padding: 18px;

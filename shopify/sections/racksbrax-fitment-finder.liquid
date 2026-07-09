@@ -101,6 +101,56 @@
     text-overflow: ellipsis;
   }
 
+  .racksbrax-fitment-finder__missing-brand-form {
+    margin-top: 20px;
+    padding: 18px;
+    border-radius: 16px;
+    background: #f3f3f3;
+  }
+
+  .racksbrax-fitment-finder__missing-brand-form[hidden] {
+    display: none;
+  }
+
+  .racksbrax-fitment-finder__missing-brand-form p {
+    margin: 0 0 16px;
+    color: #4d4d4d;
+  }
+
+  .racksbrax-fitment-finder__missing-brand-form input,
+  .racksbrax-fitment-finder__missing-brand-form textarea {
+    width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 14px;
+    padding: 14px;
+    border: 1px solid #bbb;
+    border-radius: 12px;
+    background: #ffffff;
+    font: inherit;
+  }
+
+  .racksbrax-fitment-finder__missing-brand-form button {
+    width: 100%;
+    padding: 14px 18px;
+    border: none;
+    border-radius: 12px;
+    background: #B8AB17;
+    color: #ffffff;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .racksbrax-fitment-finder__form-status {
+    margin-top: 12px;
+    color: #00495D;
+    font-weight: 700;
+  }
+
+  .racksbrax-fitment-finder__form-status.is-error {
+    color: #b42318;
+  }
+
   .racksbrax-fitment-finder__result {
     margin-top: 24px;
     padding: 18px;
@@ -283,6 +333,7 @@
   data-missing-link-label="{{ section.settings.missing_link_label | escape }}"
   data-adding-to-cart-message="{{ section.settings.adding_to_cart_message | escape }}"
   data-added-to-cart-message="{{ section.settings.added_to_cart_message | escape }}"
+  data-missing-brand-option="{{ section.settings.missing_brand_option | escape }}"
 >
   <a class="racksbrax-fitment-finder__continue" href="{{ section.settings.continue_url }}">
     {{ section.settings.continue_label }}
@@ -307,6 +358,41 @@
               <option value="">{{ section.settings.model_placeholder | escape }}</option>
             </select>
           </div>
+        </div>
+
+        <div class="racksbrax-fitment-finder__missing-brand-form" data-missing-brand-form hidden>
+          {% form 'contact' %}
+            <input type="hidden" name="contact[subject]" value="Fitment finder brand request">
+
+            <p>{{ section.settings.missing_brand_message | escape }}</p>
+
+            <label for="RacksBraxMissingBrandEmail-{{ section.id }}">{{ section.settings.missing_brand_email_label | escape }}</label>
+            <input
+              id="RacksBraxMissingBrandEmail-{{ section.id }}"
+              type="email"
+              name="contact[email]"
+              autocomplete="email"
+              required
+              placeholder="{{ section.settings.missing_brand_email_placeholder | escape }}"
+            >
+
+            <label for="RacksBraxMissingBrandDetails-{{ section.id }}">{{ section.settings.missing_brand_details_label | escape }}</label>
+            <textarea
+              id="RacksBraxMissingBrandDetails-{{ section.id }}"
+              name="contact[body]"
+              rows="4"
+              required
+              placeholder="{{ section.settings.missing_brand_details_placeholder | escape }}"
+            ></textarea>
+
+            <button type="submit">{{ section.settings.missing_brand_submit_label | escape }}</button>
+
+            {% if form.posted_successfully? %}
+              <p class="racksbrax-fitment-finder__form-status">{{ section.settings.missing_brand_success_message | escape }}</p>
+            {% elsif form.errors %}
+              <div class="racksbrax-fitment-finder__form-status is-error">{{ form.errors | default_errors }}</div>
+            {% endif %}
+          {% endform %}
         </div>
 
         <div class="racksbrax-fitment-finder__result" data-result>
@@ -341,6 +427,54 @@
       "id": "brand_placeholder",
       "label": "Brand placeholder",
       "default": "Select brand"
+    },
+    {
+      "type": "text",
+      "id": "missing_brand_option",
+      "label": "Missing brand option",
+      "default": "I can't find my brand"
+    },
+    {
+      "type": "text",
+      "id": "missing_brand_message",
+      "label": "Missing brand message",
+      "default": "Enter your email, brand and awning name and we'll get back to you."
+    },
+    {
+      "type": "text",
+      "id": "missing_brand_email_label",
+      "label": "Missing brand email label",
+      "default": "Enter email"
+    },
+    {
+      "type": "text",
+      "id": "missing_brand_email_placeholder",
+      "label": "Missing brand email placeholder",
+      "default": "you@example.com"
+    },
+    {
+      "type": "text",
+      "id": "missing_brand_details_label",
+      "label": "Missing brand details label",
+      "default": "Enter brand and awning name"
+    },
+    {
+      "type": "text",
+      "id": "missing_brand_details_placeholder",
+      "label": "Missing brand details placeholder",
+      "default": "Brand and awning model"
+    },
+    {
+      "type": "text",
+      "id": "missing_brand_submit_label",
+      "label": "Missing brand submit label",
+      "default": "Submit"
+    },
+    {
+      "type": "text",
+      "id": "missing_brand_success_message",
+      "label": "Missing brand success message",
+      "default": "Thanks, we'll get back to you."
     },
     {
       "type": "text",

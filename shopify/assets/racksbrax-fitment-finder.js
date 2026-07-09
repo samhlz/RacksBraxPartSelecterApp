@@ -17,6 +17,7 @@
     missingLinkLabel: 'Product page coming soon',
     addingToCartMessage: 'Adding setup to cart...',
     addedToCartMessage: 'Added to cart.',
+    missingBrandOption: "I can't find my brand",
   };
   var priceCache = {};
 
@@ -420,7 +421,15 @@
     var brandSelect = section.querySelector('[data-brand-select]');
     var modelSelect = section.querySelector('[data-model-select]');
     var result = section.querySelector('[data-result]');
+    var missingBrandForm = section.querySelector('[data-missing-brand-form]');
     var copy = getCopy(section);
+    var missingBrandValue = '__missing_brand__';
+
+    function setMissingBrandFormVisible(isVisible) {
+      if (!missingBrandForm) return;
+
+      missingBrandForm.hidden = !isVisible;
+    }
 
     if (!csvUrl || !brandSelect || !modelSelect || !result) return;
 
@@ -453,12 +462,22 @@
         }
 
         setOptions(brandSelect, copy.brandPlaceholder, brands);
+        brandSelect.add(new Option(copy.missingBrandOption, missingBrandValue));
 
         brandSelect.addEventListener('change', function () {
           var brand = brandSelect.value;
 
           modelSelect.disabled = !brand;
           setOptions(modelSelect, copy.modelPlaceholder, []);
+
+          if (brand === missingBrandValue) {
+            modelSelect.disabled = true;
+            result.textContent = '';
+            setMissingBrandFormVisible(true);
+            return;
+          }
+
+          setMissingBrandFormVisible(false);
           result.textContent = brand
             ? copy.modelPrompt
             : copy.initialResult;
@@ -486,6 +505,7 @@
           });
 
           if (!selectedFitment) {
+            setMissingBrandFormVisible(false);
             result.textContent = copy.unavailableMessage;
             return;
           }

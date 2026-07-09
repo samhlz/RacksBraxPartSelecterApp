@@ -123,6 +123,45 @@ select {
   text-overflow: ellipsis;
 }
 
+.missing-brand-form {
+  margin-top: 20px;
+  padding: 18px;
+  border-radius: 16px;
+  background: #f3f3f3;
+}
+
+.missing-brand-form[hidden] {
+  display: none;
+}
+
+.missing-brand-form p {
+  margin: 0 0 16px;
+  color: #4d4d4d;
+}
+
+.missing-brand-form input,
+.missing-brand-form textarea {
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 14px;
+  padding: 14px;
+  border: 1px solid #bbb;
+  border-radius: 12px;
+  background: #ffffff;
+  font: inherit;
+}
+
+.missing-brand-form button {
+  margin-top: 0;
+  background: #B8AB17;
+}
+
+.form-status {
+  margin-top: 12px;
+  color: #00495D;
+  font-weight: 700;
+}
+
 .action-buttons {
   display: none;
   grid-template-columns: repeat(2, minmax(0, 1fr));

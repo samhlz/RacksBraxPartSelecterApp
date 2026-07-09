@@ -28,6 +28,20 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
               </select>
             </div>
           </div>
+
+          <form id="missingBrandForm" class="missing-brand-form" hidden>
+            <p>Enter your email, brand and awning name and we'll get back to you.</p>
+
+            <label for="missingBrandEmail">Enter email</label>
+            <input id="missingBrandEmail" type="email" placeholder="you@example.com" required />
+
+            <label for="missingBrandDetails">Enter brand and awning name</label>
+            <textarea id="missingBrandDetails" rows="4" placeholder="Brand and awning model" required></textarea>
+
+            <button type="submit">Submit</button>
+            <p class="form-status" id="missingBrandStatus"></p>
+          </form>
+
           <section id="result" class="result">
             Select your awning to see the recommended RacksBrax hitch.
           </section>
@@ -48,10 +62,13 @@ const result = document.querySelector<HTMLElement>('#result')!;
 const buyNowButton = document.querySelector<HTMLButtonElement>('#buyNow')!;
 const addToCartButton = document.querySelector<HTMLButtonElement>('#addToCart')!;
 const actionButtonGroup = document.querySelector<HTMLElement>('.action-buttons')!;
+const missingBrandForm = document.querySelector<HTMLFormElement>('#missingBrandForm')!;
+const missingBrandStatus = document.querySelector<HTMLElement>('#missingBrandStatus')!;
 
 let csvFitments: Fitment[] = [];
 let renderVersion = 0;
 
+const missingBrandValue = '__missing_brand__';
 const actionButtons = [buyNowButton, addToCartButton];
 const unavailableMessage = "we don't fitt. :(... yet 👀";
 const priceCache = new Map<string, Promise<string | undefined>>();
@@ -61,6 +78,13 @@ const setActionsVisible = (isVisible: boolean) => {
   actionButtons.forEach((button) => {
     button.disabled = !isVisible;
   });
+};
+
+const setMissingBrandFormVisible = (isVisible: boolean) => {
+  missingBrandForm.hidden = !isVisible;
+  if (!isVisible) {
+    missingBrandStatus.textContent = '';
+  }
 };
 
 const renderProductCards = (fitment: Fitment) => {
@@ -164,6 +188,8 @@ loadFitmentsFromCsv()
       brandSelect.add(new Option(brand, brand));
     });
 
+    brandSelect.add(new Option("I can't find my brand", missingBrandValue));
+
     console.log(`Loaded ${csvFitments.length} fitments`);
   })
   .catch((error) => {
@@ -178,6 +204,15 @@ brandSelect.addEventListener('change', () => {
   modelSelect.disabled = !brand;
   result.textContent = 'Select a model to see what you need.';
   setActionsVisible(false);
+
+  if (brand === missingBrandValue) {
+    modelSelect.disabled = true;
+    result.textContent = '';
+    setMissingBrandFormVisible(true);
+    return;
+  }
+
+  setMissingBrandFormVisible(false);
 
   if (!brand) return;
 
@@ -246,5 +281,11 @@ buyNowButton.addEventListener('click', () => {
 
 addToCartButton.addEventListener('click', () => {
   result.innerHTML += `<p class="success">Cart simulation: complete kit added, staying on page.</p>`;
+});
+
+missingBrandForm.addEventListener('submit', (event) => {
+  event.preventDefault();
+  missingBrandStatus.textContent = "Thanks, we'll get back to you.";
+  missingBrandForm.reset();
 });
 
