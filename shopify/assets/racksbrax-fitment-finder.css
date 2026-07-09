@@ -176,12 +176,18 @@
 
 .racksbrax-fitment-finder__slide-panel {
   min-width: 0;
+  box-sizing: border-box;
   padding-right: 18px;
 }
 
 .racksbrax-fitment-finder__slide-panel + .racksbrax-fitment-finder__slide-panel {
   padding-right: 0;
   padding-left: 18px;
+}
+
+.racksbrax-fitment-finder__result.is-email-reminder-open .racksbrax-fitment-finder__slide-panel:first-child {
+  opacity: 0;
+  pointer-events: none;
 }
 
 .racksbrax-fitment-finder__result-header h3 {

@@ -179,12 +179,18 @@ select {
 
 .action-slider-panel {
   min-width: 0;
+  box-sizing: border-box;
   padding-right: 18px;
 }
 
 .action-slider-panel + .action-slider-panel {
   padding-right: 0;
   padding-left: 18px;
+}
+
+.result-slide-shell.is-email-reminder-open .action-slider-panel:first-child {
+  opacity: 0;
+  pointer-events: none;
 }
 
 .action-buttons {
