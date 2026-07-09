@@ -295,6 +295,7 @@ button:disabled {
 .recommendation-header h3 {
   margin: 0;
   font-size: 22px;
+  text-transform: lowercase;
 }
 
 .recommendation-header p {

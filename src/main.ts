@@ -283,7 +283,7 @@ modelSelect.addEventListener('change', () => {
 
   result.innerHTML = `
     <div class="recommendation-header">
-      <h3>Here's what you need for your ${selectedFitment.brand} ${selectedFitment.model}.</h3>
+      <h3>${`Here's what you need for your ${selectedFitment.model}.`.toLowerCase()}</h3>
     </div>
 
     ${

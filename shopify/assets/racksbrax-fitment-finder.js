@@ -3,7 +3,7 @@
     unavailableMessage: "we don't fitt. :(... yet \uD83D\uDC40",
     recommendationHeading: 'Your recommended RacksBrax setup',
     recommendationCopy: 'Based on your awning selection, these are the parts you need.',
-    recommendationTemplate: "Here's what you need for your {brand} {model}.",
+    recommendationTemplate: "Here's what you need for your {model}.",
     buyNowLabel: 'Buy now',
     addToCartLabel: 'Add to cart',
     brandPlaceholder: 'Select brand',
@@ -427,9 +427,9 @@
   }
 
   function recommendationHeading(fitment, copy) {
-    return copy.recommendationTemplate
+    return (copy.recommendationTemplate
       .replace('{brand}', fitment.brand)
-      .replace('{model}', fitment.model);
+      .replace('{model}', fitment.model)).toLowerCase();
   }
 
   function renderEmailReminderForm(fitment, copy) {
