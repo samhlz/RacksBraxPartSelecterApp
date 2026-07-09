@@ -525,6 +525,7 @@
       if (!missingBrandForm) return;
 
       missingBrandForm.hidden = !isVisible;
+      result.hidden = isVisible;
     }
 
     if (!csvUrl || !brandSelect || !modelSelect || !result) return;

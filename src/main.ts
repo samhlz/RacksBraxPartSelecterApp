@@ -128,6 +128,7 @@ const setActionsVisible = (isVisible: boolean) => {
 
 const setMissingBrandFormVisible = (isVisible: boolean) => {
   missingBrandForm.hidden = !isVisible;
+  actionSlider.hidden = isVisible;
   if (!isVisible) {
     missingBrandStatus.textContent = '';
   }
