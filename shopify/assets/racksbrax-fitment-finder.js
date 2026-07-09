@@ -4,7 +4,7 @@
     unavailableTemplate: "I'm afraid we can't fit to the {model} model.",
     recommendationHeading: 'Your recommended RacksBrax setup',
     recommendationCopy: 'Based on your awning selection, these are the parts you need.',
-    recommendationTemplate: "Here's what you need for your {model}.",
+    recommendationTemplate: "Here's the quick release setup you need for your {model}.",
     buyNowLabel: 'Buy now',
     addToCartLabel: 'Add to cart',
     brandPlaceholder: 'Select brand',

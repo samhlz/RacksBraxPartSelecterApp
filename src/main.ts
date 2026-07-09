@@ -302,7 +302,7 @@ modelSelect.addEventListener('change', () => {
 
   result.innerHTML = `
     <div class="recommendation-header">
-      <h3>Here's what you need for your ${formattedModelName(selectedFitment)}.</h3>
+      <h3>Here's the quick release setup you need for your ${formattedModelName(selectedFitment)}.</h3>
     </div>
 
     ${
