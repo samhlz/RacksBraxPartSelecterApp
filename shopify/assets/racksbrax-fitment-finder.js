@@ -420,57 +420,7 @@
     var brandSelect = section.querySelector('[data-brand-select]');
     var modelSelect = section.querySelector('[data-model-select]');
     var result = section.querySelector('[data-result]');
-    var revealButton = section.querySelector('[data-reveal-finder]');
     var copy = getCopy(section);
-    var touchStartY = 0;
-
-    function setFinderReveal(isRevealed) {
-      section.classList.toggle('is-finder-revealed', isRevealed);
-    }
-
-    window.addEventListener(
-      'wheel',
-      function (event) {
-        if (Math.abs(event.deltaY) < 8) return;
-
-        setFinderReveal(event.deltaY > 0);
-      },
-      { passive: true }
-    );
-
-    window.addEventListener(
-      'touchstart',
-      function (event) {
-        touchStartY = event.touches[0] ? event.touches[0].clientY : 0;
-      },
-      { passive: true }
-    );
-
-    window.addEventListener(
-      'touchmove',
-      function (event) {
-        var currentY = event.touches[0] ? event.touches[0].clientY : touchStartY;
-        var deltaY = touchStartY - currentY;
-
-        if (Math.abs(deltaY) < 24) return;
-
-        setFinderReveal(deltaY > 0);
-      },
-      { passive: true }
-    );
-
-    if (revealButton) {
-      revealButton.addEventListener('click', function () {
-        setFinderReveal(true);
-      });
-    }
-
-    section.addEventListener('click', function (event) {
-      if (!event.target.closest('.racksbrax-fitment-finder__intro')) return;
-      if (event.target.closest('a')) return;
-
-      setFinderReveal(true);
-    });
 
     if (!csvUrl || !brandSelect || !modelSelect || !result) return;
 

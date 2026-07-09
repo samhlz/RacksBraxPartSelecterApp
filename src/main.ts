@@ -9,16 +9,6 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
     <a class="continue-site-button" href="#">Continue to site</a>
 
     <section class="hero">
-      <div class="hero-intro">
-        <p class="eyebrow">RacksBrax Fitment Finder</p>
-
-        <h1>Quick release system for awnings and accessories.</h1>
-        <p class="hero-copy">
-          Tell us what awning you have and we'll show the RacksBrax hitch system you need.
-        </p>
-        <button class="start-button" type="button" id="revealFinder">Find my awning</button>
-      </div>
-
       <div class="finder-panel">
         <p class="finder-card-kicker">I have</p>
 
@@ -57,12 +47,9 @@ const modelSelect = document.querySelector<HTMLSelectElement>('#model')!;
 const result = document.querySelector<HTMLElement>('#result')!;
 const buyNowButton = document.querySelector<HTMLButtonElement>('#buyNow')!;
 const addToCartButton = document.querySelector<HTMLButtonElement>('#addToCart')!;
-const revealFinderButton = document.querySelector<HTMLButtonElement>('#revealFinder')!;
 const actionButtonGroup = document.querySelector<HTMLElement>('.action-buttons')!;
-const prototypePage = document.querySelector<HTMLElement>('.prototype-page')!;
 
 let csvFitments: Fitment[] = [];
-let touchStartY = 0;
 let renderVersion = 0;
 
 const actionButtons = [buyNowButton, addToCartButton];
@@ -167,45 +154,6 @@ const hydrateProductPrices = async (fitment: Fitment, version: number) => {
     result.querySelector('.product-results')!.innerHTML = renderProductCards(fitment);
   }
 };
-
-const setFinderReveal = (isRevealed: boolean) => {
-  prototypePage.classList.toggle('finder-revealed', isRevealed);
-};
-
-window.addEventListener(
-  'wheel',
-  (event) => {
-    if (Math.abs(event.deltaY) < 8) return;
-
-    setFinderReveal(event.deltaY > 0);
-  },
-  { passive: true }
-);
-
-window.addEventListener(
-  'touchstart',
-  (event) => {
-    touchStartY = event.touches[0]?.clientY ?? 0;
-  },
-  { passive: true }
-);
-
-window.addEventListener(
-  'touchmove',
-  (event) => {
-    const currentY = event.touches[0]?.clientY ?? touchStartY;
-    const deltaY = touchStartY - currentY;
-
-    if (Math.abs(deltaY) < 24) return;
-
-    setFinderReveal(deltaY > 0);
-  },
-  { passive: true }
-);
-
-revealFinderButton.addEventListener('click', () => {
-  setFinderReveal(true);
-});
 
 loadFitmentsFromCsv()
   .then((loadedFitments) => {
