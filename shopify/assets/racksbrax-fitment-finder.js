@@ -170,9 +170,16 @@
     var url = new URL(productUrl);
     url.search = '';
     url.hash = '';
-    url.pathname = url.pathname.replace(/\/$/, '') + '.js';
 
-    return url.toString();
+    return url.pathname.replace(/\/$/, '') + '.js';
+  }
+
+  function imageSrc(image) {
+    if (!image) return undefined;
+
+    if (typeof image === 'string') return image;
+
+    return image.src || (image.preview_image && image.preview_image.src);
   }
 
   function formatPrice(priceInCents) {
@@ -205,7 +212,7 @@
           variant = variant || (variants && variants[0]);
 
           return {
-            imageUrl: productData && (productData.featured_image || (productData.images && productData.images[0])),
+            imageUrl: imageSrc(variant && variant.featured_image) || imageSrc(productData && productData.featured_image) || imageSrc(productData && productData.images && productData.images[0]),
             price: variant && typeof variant.price === 'number' ? formatPrice(variant.price) : undefined,
             variantId: variant && variant.id ? String(variant.id) : undefined,
           };
