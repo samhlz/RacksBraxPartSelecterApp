@@ -283,8 +283,7 @@ modelSelect.addEventListener('change', () => {
 
   result.innerHTML = `
     <div class="recommendation-header">
-      <h3>Your recommended RacksBrax setup</h3>
-      <p>Based on your awning selection, these are the parts you need.</p>
+      <h3>Here's what you need for your ${selectedFitment.brand} ${selectedFitment.model}.</h3>
     </div>
 
     ${
