@@ -293,7 +293,7 @@ buyNowButton.addEventListener('click', () => {
 });
 
 addToCartButton.addEventListener('click', () => {
-  result.innerHTML += `<p class="success">Cart simulation: complete kit added.</p>`;
+  result.innerHTML += `<p class="success">Cart simulation: complete kit added, staying on page.</p>`;
 });
 
 checkItOutButton.addEventListener('click', () => {

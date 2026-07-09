@@ -333,7 +333,7 @@
           .then(addFitmentToCart)
           .then(function () {
             setActionStatus(result, copy.addedToCartMessage, false);
-            window.location.href = '/checkout';
+            addToCartButton.disabled = false;
           })
           .catch(function (error) {
             setActionStatus(result, error.message, true);
@@ -351,7 +351,7 @@
           .then(addFitmentToCart)
           .then(function () {
             setActionStatus(result, copy.addedToCartMessage, false);
-            window.location.href = '/cart';
+            window.location.href = '/checkout';
           })
           .catch(function (error) {
             setActionStatus(result, error.message, true);
