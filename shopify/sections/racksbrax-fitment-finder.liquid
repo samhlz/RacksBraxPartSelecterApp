@@ -459,27 +459,28 @@
 
         <div class="racksbrax-fitment-finder__missing-brand-form" data-missing-brand-form hidden>
           {% form 'contact' %}
-            <input type="hidden" name="contact[subject]" value="Fitment finder brand request">
+            <input type="hidden" name="contact[subject]" value="Works with brand request">
+            <input type="hidden" name="contact[Request type]" value="Works with brand request">
 
-            <p>{{ section.settings.missing_brand_message | escape }}</p>
+            <p>{{ section.settings.missing_brand_message | default: "Enter your email, brand and awning name and we'll get back to you." | escape }}</p>
 
-            <label for="RacksBraxMissingBrandEmail-{{ section.id }}">{{ section.settings.missing_brand_email_label | escape }}</label>
+            <label for="RacksBraxMissingBrandEmail-{{ section.id }}">{{ section.settings.missing_brand_email_label | default: 'Enter email' | escape }}</label>
             <input
               id="RacksBraxMissingBrandEmail-{{ section.id }}"
               type="email"
               name="contact[email]"
               autocomplete="email"
               required
-              placeholder="{{ section.settings.missing_brand_email_placeholder | escape }}"
+              placeholder="{{ section.settings.missing_brand_email_placeholder | default: 'you@example.com' | escape }}"
             >
 
-            <label for="RacksBraxMissingBrandDetails-{{ section.id }}">{{ section.settings.missing_brand_details_label | escape }}</label>
+            <label for="RacksBraxMissingBrandDetails-{{ section.id }}">{{ section.settings.missing_brand_details_label | default: 'Enter brand and awning name' | escape }}</label>
             <textarea
               id="RacksBraxMissingBrandDetails-{{ section.id }}"
               name="contact[body]"
               rows="4"
               required
-              placeholder="{{ section.settings.missing_brand_details_placeholder | escape }}"
+              placeholder="{{ section.settings.missing_brand_details_placeholder | default: 'Enter brand and awning name' | escape }}"
             ></textarea>
 
             <button type="submit">{{ section.settings.missing_brand_submit_label | escape }}</button>
@@ -559,7 +560,7 @@
       "type": "text",
       "id": "missing_brand_details_placeholder",
       "label": "Missing brand details placeholder",
-      "default": "Brand and awning model"
+      "default": "Enter brand and awning name"
     },
     {
       "type": "text",

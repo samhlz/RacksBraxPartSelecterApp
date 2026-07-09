@@ -36,7 +36,7 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
             <input id="missingBrandEmail" type="email" placeholder="you@example.com" required />
 
             <label for="missingBrandDetails">Enter brand and awning name</label>
-            <textarea id="missingBrandDetails" rows="4" placeholder="Brand and awning model" required></textarea>
+            <textarea id="missingBrandDetails" rows="4" placeholder="Enter brand and awning name" required></textarea>
 
             <button type="submit">Submit</button>
             <p class="form-status" id="missingBrandStatus"></p>
