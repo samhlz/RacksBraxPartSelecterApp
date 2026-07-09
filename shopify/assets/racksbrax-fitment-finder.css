@@ -203,6 +203,15 @@
   color: #4d4d4d;
 }
 
+.racksbrax-fitment-finder__note {
+  margin: 16px 0;
+  padding: 12px 14px;
+  border-left: 4px solid #B8AB17;
+  border-radius: 8px;
+  background: #fffbea;
+  color: #333333;
+}
+
 .racksbrax-fitment-finder__product-results {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));

@@ -17,6 +17,7 @@ export type Fitment = {
   products: RecommendedProduct[];
   hitchesNeeded?: string;
   details?: string;
+  note?: string;
   pocketGuideUrl?: string;
   brandLogoUrl?: string;
 };

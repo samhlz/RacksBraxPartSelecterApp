@@ -140,6 +140,7 @@
       accessories: (row.Accessories || '').trim(),
       products: buildProducts(row),
       pocketGuideUrl: (row['Download Link'] || '').trim(),
+      note: (row.Note || '').trim(),
     };
   }
 
@@ -378,12 +379,24 @@
     ].join('');
   }
 
+  function renderFitmentNote(fitment) {
+    if (!fitment.note) return '';
+
+    return [
+      '<div class="racksbrax-fitment-finder__note">',
+      '<strong>Fitment note:</strong> ',
+      escapeHtml(fitment.note),
+      '</div>',
+    ].join('');
+  }
+
   function renderResult(result, fitment, copy) {
     result.innerHTML = [
       '<div class="racksbrax-fitment-finder__result-header">',
       '<h3>' + escapeHtml(copy.recommendationHeading) + '</h3>',
       '<p>' + escapeHtml(copy.recommendationCopy) + '</p>',
       '</div>',
+      renderFitmentNote(fitment),
       '<div class="racksbrax-fitment-finder__product-results">',
       renderProductCards(fitment, copy),
       '</div>',

@@ -279,6 +279,12 @@ modelSelect.addEventListener('change', () => {
       <p>Based on your awning selection, these are the parts you need.</p>
     </div>
 
+    ${
+      selectedFitment.note
+        ? `<div class="fitment-note"><strong>Fitment note:</strong> ${selectedFitment.note}</div>`
+        : ''
+    }
+
     <div class="product-results">
       ${renderProductCards(selectedFitment)}
     </div>

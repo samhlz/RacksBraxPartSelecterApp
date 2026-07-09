@@ -37,6 +37,7 @@ function rowToFitment(row: Record<string, string>): Fitment {
     productRange: clean(row['RacksBrax Products']),
     accessories: clean(row['Accessories']),
     products: [product1, product2].filter(Boolean) as RecommendedProduct[],
+    note: clean(row['Note']),
     pocketGuideUrl: clean(row['Download Link']),
     brandLogoUrl: extractUrl(row['Logo']),
   };
