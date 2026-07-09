@@ -46,21 +46,28 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
             Select your awning to see the recommended RacksBrax hitch.
           </section>
 
-          <div class="action-buttons">
-            <button id="buyNow" class="primary-action" disabled>Buy now</button>
-            <button id="addToCart" class="secondary-action" disabled>Add to cart</button>
-            <button id="emailReminder" class="email-action" disabled>Email me so I don't forget</button>
+          <div class="action-slider">
+            <div class="action-slider-track">
+              <div class="action-slider-panel">
+                <div class="action-buttons">
+                  <button id="buyNow" class="primary-action" disabled>Buy now</button>
+                  <button id="addToCart" class="secondary-action" disabled>Add to cart</button>
+                  <button id="emailReminder" class="email-action" disabled>Email me so I don't forget</button>
+                </div>
+              </div>
+
+              <form id="emailReminderForm" class="action-slider-panel email-reminder-form">
+                <button id="emailReminderBack" class="back-action" type="button">Back</button>
+                <p>Enter your email and we'll send this setup to you.</p>
+
+                <label for="emailReminderEmail">Enter email</label>
+                <input id="emailReminderEmail" type="email" placeholder="you@example.com" required />
+
+                <button type="submit">Send reminder</button>
+                <p class="form-status" id="emailReminderStatus"></p>
+              </form>
+            </div>
           </div>
-
-          <form id="emailReminderForm" class="email-reminder-form" hidden>
-            <p>Enter your email and we'll send this setup to you.</p>
-
-            <label for="emailReminderEmail">Enter email</label>
-            <input id="emailReminderEmail" type="email" placeholder="you@example.com" required />
-
-            <button type="submit">Send reminder</button>
-            <p class="form-status" id="emailReminderStatus"></p>
-          </form>
         </div>
       </div>
     </section>
@@ -73,10 +80,11 @@ const result = document.querySelector<HTMLElement>('#result')!;
 const buyNowButton = document.querySelector<HTMLButtonElement>('#buyNow')!;
 const addToCartButton = document.querySelector<HTMLButtonElement>('#addToCart')!;
 const emailReminderButton = document.querySelector<HTMLButtonElement>('#emailReminder')!;
-const actionButtonGroup = document.querySelector<HTMLElement>('.action-buttons')!;
+const actionSlider = document.querySelector<HTMLElement>('.action-slider')!;
 const missingBrandForm = document.querySelector<HTMLFormElement>('#missingBrandForm')!;
 const missingBrandStatus = document.querySelector<HTMLElement>('#missingBrandStatus')!;
 const emailReminderForm = document.querySelector<HTMLFormElement>('#emailReminderForm')!;
+const emailReminderBackButton = document.querySelector<HTMLButtonElement>('#emailReminderBack')!;
 const emailReminderStatus = document.querySelector<HTMLElement>('#emailReminderStatus')!;
 
 let csvFitments: Fitment[] = [];
@@ -88,13 +96,13 @@ const unavailableMessage = "we don't fitt. :(... yet \u{1F440}";
 const priceCache = new Map<string, Promise<string | undefined>>();
 
 const setActionsVisible = (isVisible: boolean) => {
-  actionButtonGroup.classList.toggle('is-visible', isVisible);
+  actionSlider.classList.toggle('is-visible', isVisible);
+  actionSlider.classList.remove('is-email-reminder-open');
   actionButtons.forEach((button) => {
     button.disabled = !isVisible;
   });
 
   if (!isVisible) {
-    emailReminderForm.hidden = true;
     emailReminderStatus.textContent = '';
   }
 };
@@ -290,7 +298,7 @@ modelSelect.addEventListener('change', () => {
     </div>
   `;
 
-  emailReminderForm.hidden = true;
+  actionSlider.classList.remove('is-email-reminder-open');
   emailReminderStatus.textContent = '';
   setActionsVisible(true);
   void hydrateProductPrices(selectedFitment, currentRenderVersion);
@@ -305,8 +313,11 @@ addToCartButton.addEventListener('click', () => {
 });
 
 emailReminderButton.addEventListener('click', () => {
-  emailReminderForm.hidden = false;
-  emailReminderButton.disabled = true;
+  actionSlider.classList.add('is-email-reminder-open');
+});
+
+emailReminderBackButton.addEventListener('click', () => {
+  actionSlider.classList.remove('is-email-reminder-open');
 });
 
 emailReminderForm.addEventListener('submit', (event) => {

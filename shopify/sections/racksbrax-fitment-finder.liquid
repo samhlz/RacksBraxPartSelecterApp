@@ -157,6 +157,32 @@
     border-radius: 16px;
     background: #f3f3f3;
     line-height: 1.45;
+    overflow: hidden;
+  }
+
+  .racksbrax-fitment-finder__slide {
+    overflow: hidden;
+  }
+
+  .racksbrax-fitment-finder__slide-track {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: 200%;
+    transition: transform 260ms ease;
+  }
+
+  .racksbrax-fitment-finder__result.is-email-reminder-open .racksbrax-fitment-finder__slide-track {
+    transform: translateX(-50%);
+  }
+
+  .racksbrax-fitment-finder__slide-panel {
+    min-width: 0;
+    padding-right: 18px;
+  }
+
+  .racksbrax-fitment-finder__slide-panel + .racksbrax-fitment-finder__slide-panel {
+    padding-right: 0;
+    padding-left: 18px;
   }
 
   .racksbrax-fitment-finder__result-header h3 {
@@ -278,14 +304,7 @@
   }
 
   .racksbrax-fitment-finder__email-reminder {
-    margin-top: 12px;
-    padding: 18px;
-    border-radius: 16px;
     background: #f3f3f3;
-  }
-
-  .racksbrax-fitment-finder__email-reminder[hidden] {
-    display: none;
   }
 
   .racksbrax-fitment-finder__email-reminder p {
@@ -313,6 +332,19 @@
     color: #ffffff;
     font: inherit;
     font-weight: 700;
+    cursor: pointer;
+  }
+
+  .racksbrax-fitment-finder__email-reminder .racksbrax-fitment-finder__back-action {
+    width: auto;
+    margin-bottom: 16px;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: #00495D;
+    font: inherit;
+    font-weight: 700;
+    text-align: left;
     cursor: pointer;
   }
 
@@ -386,6 +418,7 @@
   data-email-reminder-email-label="{{ section.settings.email_reminder_email_label | escape }}"
   data-email-reminder-email-placeholder="{{ section.settings.email_reminder_email_placeholder | escape }}"
   data-email-reminder-submit-label="{{ section.settings.email_reminder_submit_label | escape }}"
+  data-email-reminder-back-label="{{ section.settings.email_reminder_back_label | escape }}"
 >
   <a class="racksbrax-fitment-finder__continue" href="{{ section.settings.continue_url }}">
     {{ section.settings.continue_label }}
@@ -629,6 +662,12 @@
       "id": "email_reminder_submit_label",
       "label": "Email reminder submit label",
       "default": "Send reminder"
+    },
+    {
+      "type": "text",
+      "id": "email_reminder_back_label",
+      "label": "Email reminder back label",
+      "default": "Back"
     },
     {
       "type": "text",

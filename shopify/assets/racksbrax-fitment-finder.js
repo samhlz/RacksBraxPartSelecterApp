@@ -23,6 +23,7 @@
     emailReminderEmailLabel: 'Enter email',
     emailReminderEmailPlaceholder: 'you@example.com',
     emailReminderSubmitLabel: 'Send reminder',
+    emailReminderBackLabel: 'Back',
   };
   var priceCache = {};
 
@@ -339,12 +340,17 @@
     var buyNowButton = result.querySelector('[data-buy-now]');
     var addToCartButton = result.querySelector('[data-add-to-cart]');
     var emailReminderButton = result.querySelector('[data-email-reminder]');
-    var emailReminderForm = result.querySelector('[data-email-reminder-form]');
+    var emailReminderBackButton = result.querySelector('[data-email-reminder-back]');
 
-    if (emailReminderButton && emailReminderForm) {
+    if (emailReminderButton) {
       emailReminderButton.addEventListener('click', function () {
-        emailReminderForm.hidden = false;
-        emailReminderButton.disabled = true;
+        result.classList.add('is-email-reminder-open');
+      });
+    }
+
+    if (emailReminderBackButton) {
+      emailReminderBackButton.addEventListener('click', function () {
+        result.classList.remove('is-email-reminder-open');
       });
     }
 
@@ -386,6 +392,7 @@
   }
 
   function renderUnavailableResult(result, copy) {
+    result.classList.remove('is-email-reminder-open');
     result.innerHTML = [
       '<div class="racksbrax-fitment-finder__result-header">',
       '<h3>',
@@ -420,7 +427,8 @@
 
   function renderEmailReminderForm(fitment, copy) {
     return [
-      '<div class="racksbrax-fitment-finder__email-reminder" data-email-reminder-form hidden>',
+      '<div class="racksbrax-fitment-finder__slide-panel racksbrax-fitment-finder__email-reminder">',
+      '<button class="racksbrax-fitment-finder__back-action" type="button" data-email-reminder-back>' + escapeHtml(copy.emailReminderBackLabel) + '</button>',
       '<form method="post" action="/contact#contact_form" accept-charset="UTF-8">',
       '<input type="hidden" name="form_type" value="contact">',
       '<input type="hidden" name="contact[subject]" value="Fitment reminder">',
@@ -435,7 +443,11 @@
   }
 
   function renderResult(result, fitment, copy) {
+    result.classList.remove('is-email-reminder-open');
     result.innerHTML = [
+      '<div class="racksbrax-fitment-finder__slide">',
+      '<div class="racksbrax-fitment-finder__slide-track">',
+      '<div class="racksbrax-fitment-finder__slide-panel">',
       '<div class="racksbrax-fitment-finder__result-header">',
       '<h3>' + escapeHtml(copy.recommendationHeading) + '</h3>',
       '<p>' + escapeHtml(copy.recommendationCopy) + '</p>',
@@ -449,8 +461,11 @@
       '<button class="racksbrax-fitment-finder__secondary-action" type="button" data-add-to-cart>' + escapeHtml(copy.addToCartLabel) + '</button>',
       '<button class="racksbrax-fitment-finder__email-action" type="button" data-email-reminder>' + escapeHtml(copy.emailReminderLabel) + '</button>',
       '</div>',
-      renderEmailReminderForm(fitment, copy),
       '<p class="racksbrax-fitment-finder__action-status" data-action-status></p>',
+      '</div>',
+      renderEmailReminderForm(fitment, copy),
+      '</div>',
+      '</div>',
     ].join('');
 
     hydrateProductPrices(result, fitment, copy);
@@ -512,6 +527,7 @@
         brandSelect.addEventListener('change', function () {
           var brand = brandSelect.value;
 
+          result.classList.remove('is-email-reminder-open');
           modelSelect.disabled = !brand;
           setOptions(modelSelect, copy.modelPlaceholder, []);
 
