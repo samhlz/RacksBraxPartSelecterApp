@@ -17,7 +17,12 @@
     missingLinkLabel: 'Product page coming soon',
     addingToCartMessage: 'Adding setup to cart...',
     addedToCartMessage: 'Added to cart.',
-    missingBrandOption: "I can't find my brand",
+    missingBrandOption: "I can't find my awning brand",
+    emailReminderLabel: "Email me so I don't forget",
+    emailReminderMessage: "Enter your email and we'll send this setup to you.",
+    emailReminderEmailLabel: 'Enter email',
+    emailReminderEmailPlaceholder: 'you@example.com',
+    emailReminderSubmitLabel: 'Send reminder',
   };
   var priceCache = {};
 
@@ -333,6 +338,16 @@
   function attachActionButtons(result, fitment, copy) {
     var buyNowButton = result.querySelector('[data-buy-now]');
     var addToCartButton = result.querySelector('[data-add-to-cart]');
+    var emailReminderButton = result.querySelector('[data-email-reminder]');
+    var emailReminderForm = result.querySelector('[data-email-reminder-form]');
+
+    if (emailReminderButton && emailReminderForm) {
+      emailReminderButton.addEventListener('click', function () {
+        emailReminderForm.hidden = false;
+        emailReminderButton.disabled = true;
+      });
+    }
+
     if (addToCartButton) {
       addToCartButton.addEventListener('click', function () {
         addToCartButton.disabled = true;
@@ -391,6 +406,34 @@
     ].join('');
   }
 
+  function fitmentReminderBody(fitment) {
+    return [
+      'Fitment reminder request',
+      'Brand: ' + fitment.brand,
+      'Model: ' + fitment.model,
+      'Products: ' + fitment.products.map(function (product) {
+        return product.name + (product.sku ? ' (' + product.sku + ')' : '');
+      }).join(', '),
+      fitment.note ? 'Fitment note: ' + fitment.note : '',
+    ].filter(Boolean).join('\n');
+  }
+
+  function renderEmailReminderForm(fitment, copy) {
+    return [
+      '<div class="racksbrax-fitment-finder__email-reminder" data-email-reminder-form hidden>',
+      '<form method="post" action="/contact#contact_form" accept-charset="UTF-8">',
+      '<input type="hidden" name="form_type" value="contact">',
+      '<input type="hidden" name="contact[subject]" value="Fitment reminder">',
+      '<textarea name="contact[body]" hidden>' + escapeHtml(fitmentReminderBody(fitment)) + '</textarea>',
+      '<p>' + escapeHtml(copy.emailReminderMessage) + '</p>',
+      '<label for="RacksBraxEmailReminder">' + escapeHtml(copy.emailReminderEmailLabel) + '</label>',
+      '<input id="RacksBraxEmailReminder" type="email" name="contact[email]" autocomplete="email" required placeholder="' + escapeHtml(copy.emailReminderEmailPlaceholder) + '">',
+      '<button type="submit">' + escapeHtml(copy.emailReminderSubmitLabel) + '</button>',
+      '</form>',
+      '</div>',
+    ].join('');
+  }
+
   function renderResult(result, fitment, copy) {
     result.innerHTML = [
       '<div class="racksbrax-fitment-finder__result-header">',
@@ -404,7 +447,9 @@
       '<div class="racksbrax-fitment-finder__actions">',
       '<button class="racksbrax-fitment-finder__primary-action" type="button" data-buy-now>' + escapeHtml(copy.buyNowLabel) + '</button>',
       '<button class="racksbrax-fitment-finder__secondary-action" type="button" data-add-to-cart>' + escapeHtml(copy.addToCartLabel) + '</button>',
+      '<button class="racksbrax-fitment-finder__email-action" type="button" data-email-reminder>' + escapeHtml(copy.emailReminderLabel) + '</button>',
       '</div>',
+      renderEmailReminderForm(fitment, copy),
       '<p class="racksbrax-fitment-finder__action-status" data-action-status></p>',
     ].join('');
 
@@ -462,7 +507,7 @@
         }
 
         setOptions(brandSelect, copy.brandPlaceholder, brands);
-        brandSelect.add(new Option(copy.missingBrandOption, missingBrandValue));
+        brandSelect.add(new Option(copy.missingBrandOption, missingBrandValue), brandSelect.options[1] || null);
 
         brandSelect.addEventListener('change', function () {
           var brand = brandSelect.value;

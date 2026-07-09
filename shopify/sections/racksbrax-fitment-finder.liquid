@@ -264,9 +264,56 @@
   }
 
   .racksbrax-fitment-finder__secondary-action {
+    grid-column: 1 / -1;
     padding: 13px 12px;
     background: #111111;
     font-size: 15px;
+  }
+
+  .racksbrax-fitment-finder__email-action {
+    grid-column: 1 / -1;
+    padding: 13px 12px;
+    background: #00495D;
+    font-size: 15px;
+  }
+
+  .racksbrax-fitment-finder__email-reminder {
+    margin-top: 12px;
+    padding: 18px;
+    border-radius: 16px;
+    background: #f3f3f3;
+  }
+
+  .racksbrax-fitment-finder__email-reminder[hidden] {
+    display: none;
+  }
+
+  .racksbrax-fitment-finder__email-reminder p {
+    margin: 0 0 16px;
+    color: #4d4d4d;
+  }
+
+  .racksbrax-fitment-finder__email-reminder input {
+    width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 14px;
+    padding: 14px;
+    border: 1px solid #bbb;
+    border-radius: 12px;
+    background: #ffffff;
+    font: inherit;
+  }
+
+  .racksbrax-fitment-finder__email-reminder button {
+    width: 100%;
+    padding: 14px 18px;
+    border: none;
+    border-radius: 12px;
+    background: #B8AB17;
+    color: #ffffff;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
   }
 
   .racksbrax-fitment-finder__action-status {
@@ -334,6 +381,11 @@
   data-adding-to-cart-message="{{ section.settings.adding_to_cart_message | escape }}"
   data-added-to-cart-message="{{ section.settings.added_to_cart_message | escape }}"
   data-missing-brand-option="{{ section.settings.missing_brand_option | escape }}"
+  data-email-reminder-label="{{ section.settings.email_reminder_label | escape }}"
+  data-email-reminder-message="{{ section.settings.email_reminder_message | escape }}"
+  data-email-reminder-email-label="{{ section.settings.email_reminder_email_label | escape }}"
+  data-email-reminder-email-placeholder="{{ section.settings.email_reminder_email_placeholder | escape }}"
+  data-email-reminder-submit-label="{{ section.settings.email_reminder_submit_label | escape }}"
 >
   <a class="racksbrax-fitment-finder__continue" href="{{ section.settings.continue_url }}">
     {{ section.settings.continue_label }}
@@ -432,7 +484,7 @@
       "type": "text",
       "id": "missing_brand_option",
       "label": "Missing brand option",
-      "default": "I can't find my brand"
+      "default": "I can't find my awning brand"
     },
     {
       "type": "text",
@@ -547,6 +599,36 @@
       "id": "add_to_cart_label",
       "label": "Add to cart button label",
       "default": "Add to cart"
+    },
+    {
+      "type": "text",
+      "id": "email_reminder_label",
+      "label": "Email reminder button label",
+      "default": "Email me so I don't forget"
+    },
+    {
+      "type": "text",
+      "id": "email_reminder_message",
+      "label": "Email reminder message",
+      "default": "Enter your email and we'll send this setup to you."
+    },
+    {
+      "type": "text",
+      "id": "email_reminder_email_label",
+      "label": "Email reminder email label",
+      "default": "Enter email"
+    },
+    {
+      "type": "text",
+      "id": "email_reminder_email_placeholder",
+      "label": "Email reminder email placeholder",
+      "default": "you@example.com"
+    },
+    {
+      "type": "text",
+      "id": "email_reminder_submit_label",
+      "label": "Email reminder submit label",
+      "default": "Send reminder"
     },
     {
       "type": "text",

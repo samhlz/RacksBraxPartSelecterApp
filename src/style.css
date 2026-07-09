@@ -164,7 +164,7 @@ select {
 
 .action-buttons {
   display: none;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 1fr);
   gap: 12px;
   margin-top: 24px;
 }
@@ -194,8 +194,48 @@ button {
 }
 
 .secondary-action {
+  grid-column: 1 / -1;
   padding: 12px 12px;
   font-size: 14px;
+}
+
+.email-action {
+  grid-column: 1 / -1;
+  background: #00495D;
+  padding: 12px 12px;
+  font-size: 14px;
+}
+
+.email-reminder-form {
+  margin-top: 12px;
+  padding: 18px;
+  border-radius: 16px;
+  background: #f3f3f3;
+}
+
+.email-reminder-form[hidden] {
+  display: none;
+}
+
+.email-reminder-form p {
+  margin: 0 0 16px;
+  color: #4d4d4d;
+}
+
+.email-reminder-form input {
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 14px;
+  padding: 14px;
+  border: 1px solid #bbb;
+  border-radius: 12px;
+  background: #ffffff;
+  font: inherit;
+}
+
+.email-reminder-form button {
+  margin-top: 0;
+  background: #B8AB17;
 }
 
 button:disabled {
@@ -274,6 +314,6 @@ button:disabled {
   }
 
   .action-buttons {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: 1fr;
   }
 }

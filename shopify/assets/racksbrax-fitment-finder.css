@@ -263,9 +263,56 @@
 }
 
 .racksbrax-fitment-finder__secondary-action {
+  grid-column: 1 / -1;
   padding: 13px 12px;
   background: #111111;
   font-size: 15px;
+}
+
+.racksbrax-fitment-finder__email-action {
+  grid-column: 1 / -1;
+  padding: 13px 12px;
+  background: #00495D;
+  font-size: 15px;
+}
+
+.racksbrax-fitment-finder__email-reminder {
+  margin-top: 12px;
+  padding: 18px;
+  border-radius: 16px;
+  background: #f3f3f3;
+}
+
+.racksbrax-fitment-finder__email-reminder[hidden] {
+  display: none;
+}
+
+.racksbrax-fitment-finder__email-reminder p {
+  margin: 0 0 16px;
+  color: #4d4d4d;
+}
+
+.racksbrax-fitment-finder__email-reminder input {
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 14px;
+  padding: 14px;
+  border: 1px solid #bbb;
+  border-radius: 12px;
+  background: #ffffff;
+  font: inherit;
+}
+
+.racksbrax-fitment-finder__email-reminder button {
+  width: 100%;
+  padding: 14px 18px;
+  border: none;
+  border-radius: 12px;
+  background: #B8AB17;
+  color: #ffffff;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
 }
 
 .racksbrax-fitment-finder__action-status {

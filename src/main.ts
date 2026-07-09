@@ -49,7 +49,18 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
           <div class="action-buttons">
             <button id="buyNow" class="primary-action" disabled>Buy now</button>
             <button id="addToCart" class="secondary-action" disabled>Add to cart</button>
+            <button id="emailReminder" class="email-action" disabled>Email me so I don't forget</button>
           </div>
+
+          <form id="emailReminderForm" class="email-reminder-form" hidden>
+            <p>Enter your email and we'll send this setup to you.</p>
+
+            <label for="emailReminderEmail">Enter email</label>
+            <input id="emailReminderEmail" type="email" placeholder="you@example.com" required />
+
+            <button type="submit">Send reminder</button>
+            <p class="form-status" id="emailReminderStatus"></p>
+          </form>
         </div>
       </div>
     </section>
@@ -61,16 +72,19 @@ const modelSelect = document.querySelector<HTMLSelectElement>('#model')!;
 const result = document.querySelector<HTMLElement>('#result')!;
 const buyNowButton = document.querySelector<HTMLButtonElement>('#buyNow')!;
 const addToCartButton = document.querySelector<HTMLButtonElement>('#addToCart')!;
+const emailReminderButton = document.querySelector<HTMLButtonElement>('#emailReminder')!;
 const actionButtonGroup = document.querySelector<HTMLElement>('.action-buttons')!;
 const missingBrandForm = document.querySelector<HTMLFormElement>('#missingBrandForm')!;
 const missingBrandStatus = document.querySelector<HTMLElement>('#missingBrandStatus')!;
+const emailReminderForm = document.querySelector<HTMLFormElement>('#emailReminderForm')!;
+const emailReminderStatus = document.querySelector<HTMLElement>('#emailReminderStatus')!;
 
 let csvFitments: Fitment[] = [];
 let renderVersion = 0;
 
 const missingBrandValue = '__missing_brand__';
-const actionButtons = [buyNowButton, addToCartButton];
-const unavailableMessage = "we don't fitt. :(... yet 👀";
+const actionButtons = [buyNowButton, addToCartButton, emailReminderButton];
+const unavailableMessage = "we don't fitt. :(... yet \u{1F440}";
 const priceCache = new Map<string, Promise<string | undefined>>();
 
 const setActionsVisible = (isVisible: boolean) => {
@@ -78,6 +92,11 @@ const setActionsVisible = (isVisible: boolean) => {
   actionButtons.forEach((button) => {
     button.disabled = !isVisible;
   });
+
+  if (!isVisible) {
+    emailReminderForm.hidden = true;
+    emailReminderStatus.textContent = '';
+  }
 };
 
 const setMissingBrandFormVisible = (isVisible: boolean) => {
@@ -188,7 +207,7 @@ loadFitmentsFromCsv()
       brandSelect.add(new Option(brand, brand));
     });
 
-    brandSelect.add(new Option("I can't find my brand", missingBrandValue));
+    brandSelect.add(new Option("I can't find my awning brand", missingBrandValue), brandSelect.options[1] ?? null);
 
     console.log(`Loaded ${csvFitments.length} fitments`);
   })
@@ -271,6 +290,8 @@ modelSelect.addEventListener('change', () => {
     </div>
   `;
 
+  emailReminderForm.hidden = true;
+  emailReminderStatus.textContent = '';
   setActionsVisible(true);
   void hydrateProductPrices(selectedFitment, currentRenderVersion);
 });
@@ -281,6 +302,17 @@ buyNowButton.addEventListener('click', () => {
 
 addToCartButton.addEventListener('click', () => {
   result.innerHTML += `<p class="success">Cart simulation: complete kit added, staying on page.</p>`;
+});
+
+emailReminderButton.addEventListener('click', () => {
+  emailReminderForm.hidden = false;
+  emailReminderButton.disabled = true;
+});
+
+emailReminderForm.addEventListener('submit', (event) => {
+  event.preventDefault();
+  emailReminderStatus.textContent = "Thanks, we'll email this setup to you.";
+  emailReminderForm.reset();
 });
 
 missingBrandForm.addEventListener('submit', (event) => {
