@@ -428,7 +428,9 @@
   function renderEmailReminderForm(fitment, copy) {
     return [
       '<div class="racksbrax-fitment-finder__slide-panel racksbrax-fitment-finder__email-reminder">',
-      '<button class="racksbrax-fitment-finder__back-action" type="button" data-email-reminder-back>' + escapeHtml(copy.emailReminderBackLabel) + '</button>',
+      '<button class="racksbrax-fitment-finder__back-action" type="button" data-email-reminder-back aria-label="' + escapeHtml(copy.emailReminderBackLabel) + '">',
+      '<span aria-hidden="true">←</span>',
+      '</button>',
       '<form method="post" action="/contact#contact_form" accept-charset="UTF-8">',
       '<input type="hidden" name="form_type" value="contact">',
       '<input type="hidden" name="contact[subject]" value="Fitment reminder">',

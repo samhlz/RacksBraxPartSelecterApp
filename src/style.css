@@ -162,14 +162,8 @@ select {
   font-weight: 700;
 }
 
-.action-slider {
-  display: none;
+.result-slide-shell {
   overflow: hidden;
-  margin-top: 24px;
-}
-
-.action-slider.is-visible {
-  display: block;
 }
 
 .action-slider-track {
@@ -179,7 +173,7 @@ select {
   transition: transform 260ms ease;
 }
 
-.action-slider.is-email-reminder-open .action-slider-track {
+.result-slide-shell.is-email-reminder-open .action-slider-track {
   transform: translateX(-50%);
 }
 
@@ -194,10 +188,14 @@ select {
 }
 
 .action-buttons {
-  display: grid;
+  display: none;
   grid-template-columns: minmax(0, 1fr);
   gap: 12px;
-  margin-top: 0;
+  margin-top: 24px;
+}
+
+.result-slide-shell.has-actions .action-buttons {
+  display: grid;
 }
 
 button {
@@ -259,15 +257,19 @@ button {
 }
 
 .email-reminder-form .back-action {
-  width: auto;
+  display: inline-grid;
+  width: 42px;
+  height: 42px;
+  place-items: center;
   margin-bottom: 16px;
   padding: 0;
   border: none;
-  background: transparent;
+  border-radius: 999px;
+  background: #ffffff;
   color: #00495D;
-  font: inherit;
+  font-size: 28px;
+  line-height: 1;
   font-weight: 700;
-  text-align: left;
   cursor: pointer;
 }
 

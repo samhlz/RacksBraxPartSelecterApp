@@ -335,15 +335,19 @@
 }
 
 .racksbrax-fitment-finder__email-reminder .racksbrax-fitment-finder__back-action {
-  width: auto;
+  display: inline-grid;
+  width: 42px;
+  height: 42px;
+  place-items: center;
   margin-bottom: 16px;
   padding: 0;
   border: none;
-  background: transparent;
+  border-radius: 999px;
+  background: #ffffff;
   color: #00495D;
-  font: inherit;
+  font-size: 28px;
+  line-height: 1;
   font-weight: 700;
-  text-align: left;
   cursor: pointer;
 }
 

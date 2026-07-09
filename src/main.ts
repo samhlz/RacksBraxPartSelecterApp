@@ -42,13 +42,13 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
             <p class="form-status" id="missingBrandStatus"></p>
           </form>
 
-          <section id="result" class="result">
-            Select your awning to see the recommended RacksBrax hitch.
-          </section>
-
-          <div class="action-slider">
+          <section class="result result-slide-shell">
             <div class="action-slider-track">
               <div class="action-slider-panel">
+                <div id="result">
+                  Select your awning to see the recommended RacksBrax hitch.
+                </div>
+
                 <div class="action-buttons">
                   <button id="buyNow" class="primary-action" disabled>Buy now</button>
                   <button id="addToCart" class="secondary-action" disabled>Add to cart</button>
@@ -57,7 +57,7 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
               </div>
 
               <form id="emailReminderForm" class="action-slider-panel email-reminder-form">
-                <button id="emailReminderBack" class="back-action" type="button">Back</button>
+                <button id="emailReminderBack" class="back-action" type="button" aria-label="Back">←</button>
                 <p>Enter your email and we'll send this setup to you.</p>
 
                 <label for="emailReminderEmail">Enter email</label>
@@ -67,7 +67,7 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
                 <p class="form-status" id="emailReminderStatus"></p>
               </form>
             </div>
-          </div>
+          </section>
         </div>
       </div>
     </section>
@@ -80,7 +80,7 @@ const result = document.querySelector<HTMLElement>('#result')!;
 const buyNowButton = document.querySelector<HTMLButtonElement>('#buyNow')!;
 const addToCartButton = document.querySelector<HTMLButtonElement>('#addToCart')!;
 const emailReminderButton = document.querySelector<HTMLButtonElement>('#emailReminder')!;
-const actionSlider = document.querySelector<HTMLElement>('.action-slider')!;
+const actionSlider = document.querySelector<HTMLElement>('.result-slide-shell')!;
 const missingBrandForm = document.querySelector<HTMLFormElement>('#missingBrandForm')!;
 const missingBrandStatus = document.querySelector<HTMLElement>('#missingBrandStatus')!;
 const emailReminderForm = document.querySelector<HTMLFormElement>('#emailReminderForm')!;
@@ -96,7 +96,7 @@ const unavailableMessage = "we don't fitt. :(... yet \u{1F440}";
 const priceCache = new Map<string, Promise<string | undefined>>();
 
 const setActionsVisible = (isVisible: boolean) => {
-  actionSlider.classList.toggle('is-visible', isVisible);
+  actionSlider.classList.toggle('has-actions', isVisible);
   actionSlider.classList.remove('is-email-reminder-open');
   actionButtons.forEach((button) => {
     button.disabled = !isVisible;
