@@ -1,9 +1,10 @@
 (function () {
   var defaultCopy = {
-    unavailableMessage: "we don't fitt. :(... yet \uD83D\uDC40",
+    unavailableMessage: "I'm afraid we can't fit to the {model} model.",
+    unavailableTemplate: "I'm afraid we can't fit to the {model} model.",
     recommendationHeading: 'Your recommended RacksBrax setup',
     recommendationCopy: 'Based on your awning selection, these are the parts you need.',
-    recommendationTemplate: "here's what you need for your {model}.",
+    recommendationTemplate: "Here's what you need for your {model}.",
     buyNowLabel: 'Buy now',
     addToCartLabel: 'Add to cart',
     brandPlaceholder: 'Select brand',
@@ -392,17 +393,6 @@
     }
   }
 
-  function renderUnavailableResult(result, copy) {
-    result.classList.remove('is-email-reminder-open');
-    result.innerHTML = [
-      '<div class="racksbrax-fitment-finder__result-header">',
-      '<h3>',
-      escapeHtml(copy.unavailableMessage),
-      '</h3>',
-      '</div>',
-    ].join('');
-  }
-
   function renderFitmentNote(fitment) {
     if (!fitment.note) return '';
 
@@ -448,7 +438,26 @@
       .replace('{brand}', fitment.brand.toUpperCase())
       .replace('{model}', formattedModelName(fitment));
 
-    return heading.charAt(0).toLowerCase() + heading.slice(1);
+    return heading.charAt(0).toUpperCase() + heading.slice(1);
+  }
+
+  function unavailableHeading(fitment, copy) {
+    var heading = copy.unavailableTemplate
+      .replace('{brand}', fitment.brand.toUpperCase())
+      .replace('{model}', formattedModelName(fitment));
+
+    return heading.charAt(0).toUpperCase() + heading.slice(1);
+  }
+
+  function renderUnavailableResult(result, fitment, copy) {
+    result.classList.remove('is-email-reminder-open');
+    result.innerHTML = [
+      '<div class="racksbrax-fitment-finder__result-header">',
+      '<h3>',
+      escapeHtml(unavailableHeading(fitment, copy)),
+      '</h3>',
+      '</div>',
+    ].join('');
   }
 
   function renderEmailReminderForm(fitment, copy) {
@@ -594,12 +603,18 @@
 
           if (!selectedFitment) {
             setMissingBrandFormVisible(false);
-            result.textContent = copy.unavailableMessage;
+            result.textContent = unavailableHeading(
+              {
+                brand: brandSelect.value,
+                model: modelSelect.value,
+              },
+              copy
+            );
             return;
           }
 
           if (isUnavailableFitment(selectedFitment)) {
-            renderUnavailableResult(result, copy);
+            renderUnavailableResult(result, selectedFitment, copy);
             return;
           }
 

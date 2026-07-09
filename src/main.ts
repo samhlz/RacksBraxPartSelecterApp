@@ -92,8 +92,27 @@ let renderVersion = 0;
 
 const missingBrandValue = '__missing_brand__';
 const actionButtons = [buyNowButton, addToCartButton, emailReminderButton];
-const unavailableMessage = "we don't fitt. :(... yet \u{1F440}";
 const priceCache = new Map<string, Promise<string | undefined>>();
+
+function titleCase(value: string) {
+  return value.toLowerCase().replace(/\S+/g, (word) => word.charAt(0).toUpperCase() + word.slice(1));
+}
+
+function formatModelName(brand: string, model: string) {
+  if (!brand || !model.toLowerCase().startsWith(brand.toLowerCase())) {
+    return titleCase(model);
+  }
+
+  return `${model.slice(0, brand.length).toUpperCase()}${titleCase(model.slice(brand.length))}`;
+}
+
+function formattedModelName(fitment: Fitment) {
+  return formatModelName(fitment.brand, fitment.model);
+}
+
+function unavailableHeading(brand: string, model: string) {
+  return `I'm afraid we can't fit to the ${formatModelName(brand, model)} model.`;
+}
 
 const setActionsVisible = (isVisible: boolean) => {
   actionSlider.classList.toggle('has-actions', isVisible);
@@ -138,10 +157,10 @@ const isUnavailableFitment = (fitment: Fitment) => {
   });
 };
 
-const renderUnavailableFitment = () => {
+const renderUnavailableFitment = (fitment: Fitment) => {
   result.innerHTML = `
     <div class="recommendation-header">
-      <h3>${unavailableMessage}</h3>
+      <h3>${unavailableHeading(fitment.brand, fitment.model)}</h3>
     </div>
   `;
   setActionsVisible(false);
@@ -204,19 +223,6 @@ const hydrateProductPrices = async (fitment: Fitment, version: number) => {
   if (version === renderVersion) {
     result.querySelector('.product-results')!.innerHTML = renderProductCards(fitment);
   }
-};
-
-const titleCase = (value: string) =>
-  value.toLowerCase().replace(/\S+/g, (word) => word.charAt(0).toUpperCase() + word.slice(1));
-
-const formattedModelName = (fitment: Fitment) => {
-  if (!fitment.brand || !fitment.model.toLowerCase().startsWith(fitment.brand.toLowerCase())) {
-    return titleCase(fitment.model);
-  }
-
-  return `${fitment.model.slice(0, fitment.brand.length).toUpperCase()}${titleCase(
-    fitment.model.slice(fitment.brand.length)
-  )}`;
 };
 
 loadFitmentsFromCsv()
@@ -284,19 +290,19 @@ modelSelect.addEventListener('change', () => {
   );
 
   if (!selectedFitment) {
-    result.textContent = unavailableMessage;
+    result.textContent = unavailableHeading(brand, model);
     setActionsVisible(false);
     return;
   }
 
   if (isUnavailableFitment(selectedFitment)) {
-    renderUnavailableFitment();
+    renderUnavailableFitment(selectedFitment);
     return;
   }
 
   result.innerHTML = `
     <div class="recommendation-header">
-      <h3>here's what you need for your ${formattedModelName(selectedFitment)}.</h3>
+      <h3>Here's what you need for your ${formattedModelName(selectedFitment)}.</h3>
     </div>
 
     ${

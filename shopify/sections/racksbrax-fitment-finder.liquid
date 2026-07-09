@@ -406,6 +406,7 @@
   data-racksbrax-fitment-finder
   data-fitments-url="{{ 'fitments_product_columns_with_urls.csv' | asset_url }}"
   data-unavailable-message="{{ section.settings.unavailable_message | escape }}"
+  data-unavailable-template="{{ section.settings.unavailable_template | escape }}"
   data-recommendation-heading="{{ section.settings.recommendation_heading | escape }}"
   data-recommendation-copy="{{ section.settings.recommendation_copy | escape }}"
   data-buy-now-label="{{ section.settings.buy_now_label | escape }}"
@@ -600,7 +601,7 @@
       "type": "text",
       "id": "recommendation_template",
       "label": "Recommendation heading template",
-      "default": "here's what you need for your {model}."
+      "default": "Here's what you need for your {model}."
     },
     {
       "type": "text",
@@ -700,9 +701,15 @@
     },
     {
       "type": "text",
+      "id": "unavailable_template",
+      "label": "Unavailable fitment template",
+      "default": "I'm afraid we can't fit to the {model} model."
+    },
+    {
+      "type": "text",
       "id": "unavailable_message",
       "label": "Unavailable fitment message",
-      "default": "we don't fitt. :(... yet \uD83D\uDC40"
+      "default": "I'm afraid we can't fit to the {model} model."
     },
     {
       "type": "text",
