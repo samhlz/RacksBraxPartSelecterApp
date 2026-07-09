@@ -45,7 +45,6 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
           <div class="action-buttons">
             <button id="buyNow" class="primary-action" disabled>Buy now</button>
             <button id="addToCart" class="secondary-action" disabled>Add to cart</button>
-            <button id="checkItOut" disabled>Have a closer look</button>
           </div>
         </div>
       </div>
@@ -58,7 +57,6 @@ const modelSelect = document.querySelector<HTMLSelectElement>('#model')!;
 const result = document.querySelector<HTMLElement>('#result')!;
 const buyNowButton = document.querySelector<HTMLButtonElement>('#buyNow')!;
 const addToCartButton = document.querySelector<HTMLButtonElement>('#addToCart')!;
-const checkItOutButton = document.querySelector<HTMLButtonElement>('#checkItOut')!;
 const revealFinderButton = document.querySelector<HTMLButtonElement>('#revealFinder')!;
 const actionButtonGroup = document.querySelector<HTMLElement>('.action-buttons')!;
 const prototypePage = document.querySelector<HTMLElement>('.prototype-page')!;
@@ -67,7 +65,7 @@ let csvFitments: Fitment[] = [];
 let touchStartY = 0;
 let renderVersion = 0;
 
-const actionButtons = [buyNowButton, addToCartButton, checkItOutButton];
+const actionButtons = [buyNowButton, addToCartButton];
 const unavailableMessage = "we don't fitt. :(... yet 👀";
 const priceCache = new Map<string, Promise<string | undefined>>();
 
@@ -302,6 +300,3 @@ addToCartButton.addEventListener('click', () => {
   result.innerHTML += `<p class="success">Cart simulation: complete kit added, staying on page.</p>`;
 });
 
-checkItOutButton.addEventListener('click', () => {
-  result.innerHTML += `<p class="success">Have a closer look simulation: product details opened.</p>`;
-});
