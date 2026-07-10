@@ -106,10 +106,38 @@
     padding: 18px;
     border-radius: 16px;
     background: #f3f3f3;
+    overflow: hidden;
   }
 
   .racksbrax-fitment-finder__missing-brand-form[hidden] {
     display: none;
+  }
+
+  .racksbrax-fitment-finder__missing-brand-track {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: 200%;
+    transition: transform 260ms ease;
+  }
+
+  .racksbrax-fitment-finder__missing-brand-form.is-acknowledgement-open .racksbrax-fitment-finder__missing-brand-track {
+    transform: translateX(-50%);
+  }
+
+  .racksbrax-fitment-finder__missing-brand-panel {
+    min-width: 0;
+    box-sizing: border-box;
+    padding-right: 18px;
+  }
+
+  .racksbrax-fitment-finder__missing-brand-panel + .racksbrax-fitment-finder__missing-brand-panel {
+    padding-right: 0;
+    padding-left: 18px;
+  }
+
+  .racksbrax-fitment-finder__missing-brand-form.is-acknowledgement-open .racksbrax-fitment-finder__missing-brand-panel:first-child {
+    opacity: 0;
+    pointer-events: none;
   }
 
   .racksbrax-fitment-finder__missing-brand-form p {
@@ -379,6 +407,47 @@
     font-weight: 700;
   }
 
+  .racksbrax-fitment-finder__acknowledgement-card {
+    min-height: 190px;
+    display: grid;
+    align-content: center;
+    justify-items: start;
+    color: #1d1d1d;
+    animation: racksbrax-acknowledgement-slide-in 260ms ease;
+  }
+
+  .racksbrax-fitment-finder__acknowledgement-card h3 {
+    margin: 0;
+    color: #00495D;
+    font-size: 26px;
+  }
+
+  .racksbrax-fitment-finder__acknowledgement-card p {
+    margin: 8px 0 0;
+    color: #4d4d4d;
+  }
+
+  .racksbrax-fitment-finder__acknowledgement-kicker {
+    margin: 0 0 8px;
+    color: #B8AB17;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  @keyframes racksbrax-acknowledgement-slide-in {
+    from {
+      opacity: 0;
+      transform: translateX(18px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
   @media (max-width: 820px) {
     .racksbrax-fitment-finder__inner {
       padding-top: 96px;
@@ -406,6 +475,7 @@
 </style>
 
 <section
+  id="racksbrax-fitment-finder"
   class="racksbrax-fitment-finder"
   data-racksbrax-fitment-finder
   data-fitments-url="{{ 'fitments_product_columns_with_urls.csv' | asset_url }}"
@@ -430,12 +500,14 @@
   data-adding-to-cart-message="{{ section.settings.adding_to_cart_message | escape }}"
   data-added-to-cart-message="{{ section.settings.added_to_cart_message | escape }}"
   data-missing-brand-option="{{ section.settings.missing_brand_option | escape }}"
+  data-missing-brand-success-message="{{ section.settings.missing_brand_success_message | escape }}"
   data-email-reminder-label="{{ section.settings.email_reminder_label | escape }}"
   data-email-reminder-message="{{ section.settings.email_reminder_message | escape }}"
   data-email-reminder-email-label="{{ section.settings.email_reminder_email_label | escape }}"
   data-email-reminder-email-placeholder="{{ section.settings.email_reminder_email_placeholder | escape }}"
   data-email-reminder-submit-label="{{ section.settings.email_reminder_submit_label | escape }}"
   data-email-reminder-back-label="{{ section.settings.email_reminder_back_label | escape }}"
+  data-email-reminder-success-message="{{ section.settings.email_reminder_success_message | escape }}"
 >
   <a class="racksbrax-fitment-finder__continue" href="{{ section.settings.continue_url }}">
     {{ section.settings.continue_label }}
@@ -463,39 +535,56 @@
         </div>
 
         <div class="racksbrax-fitment-finder__missing-brand-form" data-missing-brand-form hidden>
-          {% form 'contact' %}
-            <input type="hidden" name="contact[subject]" value="Works with brand request">
-            <input type="hidden" name="contact[Request type]" value="Works with brand request">
+          <div class="racksbrax-fitment-finder__missing-brand-track">
+            {% form 'contact', class: 'racksbrax-fitment-finder__missing-brand-panel' %}
+              <input type="hidden" name="return_to" value="">
+              <input type="hidden" name="contact[subject]" value="Works with brand request">
+              <input type="hidden" name="contact[Request type]" value="Works with brand request">
 
-            <p>{{ section.settings.missing_brand_message | default: "Enter your email, brand and awning name and we'll get back to you." | escape }}</p>
+              <p>{{ section.settings.missing_brand_message | default: "Enter your email, brand and awning name and we'll get back to you." | escape }}</p>
 
-            <label for="RacksBraxMissingBrandEmail-{{ section.id }}">{{ section.settings.missing_brand_email_label | default: 'Enter email' | escape }}</label>
-            <input
-              id="RacksBraxMissingBrandEmail-{{ section.id }}"
-              type="email"
-              name="contact[email]"
-              autocomplete="email"
-              required
-              placeholder="{{ section.settings.missing_brand_email_placeholder | default: 'you@example.com' | escape }}"
-            >
+              <label for="RacksBraxMissingBrandName-{{ section.id }}">{{ section.settings.missing_brand_name_label | default: 'Name' | escape }}</label>
+              <input
+                id="RacksBraxMissingBrandName-{{ section.id }}"
+                type="text"
+                name="contact[name]"
+                autocomplete="name"
+                required
+                placeholder="{{ section.settings.missing_brand_name_placeholder | default: 'Your name' | escape }}"
+              >
 
-            <label for="RacksBraxMissingBrandDetails-{{ section.id }}">{{ section.settings.missing_brand_details_label | default: 'Enter brand and awning name' | escape }}</label>
-            <textarea
-              id="RacksBraxMissingBrandDetails-{{ section.id }}"
-              name="contact[body]"
-              rows="4"
-              required
-              placeholder="{{ section.settings.missing_brand_details_placeholder | default: 'Enter brand and awning name' | escape }}"
-            ></textarea>
+              <label for="RacksBraxMissingBrandEmail-{{ section.id }}">{{ section.settings.missing_brand_email_label | default: 'Enter email' | escape }}</label>
+              <input
+                id="RacksBraxMissingBrandEmail-{{ section.id }}"
+                type="email"
+                name="contact[email]"
+                autocomplete="email"
+                required
+                placeholder="{{ section.settings.missing_brand_email_placeholder | default: 'you@example.com' | escape }}"
+              >
 
-            <button type="submit">{{ section.settings.missing_brand_submit_label | escape }}</button>
+              <label for="RacksBraxMissingBrandDetails-{{ section.id }}">{{ section.settings.missing_brand_details_label | default: 'Enter brand and awning name' | escape }}</label>
+              <textarea
+                id="RacksBraxMissingBrandDetails-{{ section.id }}"
+                name="contact[body]"
+                rows="4"
+                required
+                placeholder="{{ section.settings.missing_brand_details_placeholder | default: 'Enter brand and awning name' | escape }}"
+              ></textarea>
 
-            {% if form.posted_successfully? %}
-              <p class="racksbrax-fitment-finder__form-status">{{ section.settings.missing_brand_success_message | escape }}</p>
-            {% elsif form.errors %}
-              <div class="racksbrax-fitment-finder__form-status is-error">{{ form.errors | default_errors }}</div>
-            {% endif %}
-          {% endform %}
+              <button type="submit">{{ section.settings.missing_brand_submit_label | escape }}</button>
+
+              {% if form.errors %}
+                <div class="racksbrax-fitment-finder__form-status is-error" aria-live="polite">{{ form.errors | default_errors }}</div>
+              {% endif %}
+            {% endform %}
+
+            <div class="racksbrax-fitment-finder__missing-brand-panel racksbrax-fitment-finder__acknowledgement-card" aria-live="polite">
+              <p class="racksbrax-fitment-finder__acknowledgement-kicker">Thanks</p>
+              <h3>We've got it.</h3>
+              <p>{{ section.settings.missing_brand_success_message | escape }}</p>
+            </div>
+          </div>
         </div>
 
         <div class="racksbrax-fitment-finder__result" data-result>
@@ -545,6 +634,18 @@
     },
     {
       "type": "text",
+      "id": "missing_brand_name_label",
+      "label": "Missing brand name label",
+      "default": "Name"
+    },
+    {
+      "type": "text",
+      "id": "missing_brand_name_placeholder",
+      "label": "Missing brand name placeholder",
+      "default": "Your name"
+    },
+    {
+      "type": "text",
       "id": "missing_brand_email_label",
       "label": "Missing brand email label",
       "default": "Enter email"
@@ -577,7 +678,7 @@
       "type": "text",
       "id": "missing_brand_success_message",
       "label": "Missing brand success message",
-      "default": "Thanks, we'll get back to you."
+      "default": "We'll get back to you."
     },
     {
       "type": "text",
@@ -698,6 +799,12 @@
       "id": "email_reminder_back_label",
       "label": "Email reminder back label",
       "default": "Back"
+    },
+    {
+      "type": "text",
+      "id": "email_reminder_success_message",
+      "label": "Email reminder success message",
+      "default": "We'll email this setup to you."
     },
     {
       "type": "text",

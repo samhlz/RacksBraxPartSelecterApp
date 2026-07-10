@@ -29,18 +29,30 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
             </div>
           </div>
 
-          <form id="missingBrandForm" class="missing-brand-form" hidden>
-            <p>Enter your email, brand and awning name and we'll get back to you.</p>
+          <section id="missingBrandShell" class="missing-brand-form missing-brand-slide-shell" hidden>
+            <div class="missing-brand-slider-track">
+              <form id="missingBrandForm" class="missing-brand-panel">
+                <p>Enter your email, brand and awning name and we'll get back to you.</p>
 
-            <label for="missingBrandEmail">Enter email</label>
-            <input id="missingBrandEmail" type="email" placeholder="you@example.com" required />
+                <label for="missingBrandName">Name</label>
+                <input id="missingBrandName" type="text" placeholder="Your name" required />
 
-            <label for="missingBrandDetails">Enter brand and awning name</label>
-            <textarea id="missingBrandDetails" rows="4" placeholder="Enter brand and awning name" required></textarea>
+                <label for="missingBrandEmail">Enter email</label>
+                <input id="missingBrandEmail" type="email" placeholder="you@example.com" required />
 
-            <button type="submit">Submit</button>
-            <p class="form-status" id="missingBrandStatus"></p>
-          </form>
+                <label for="missingBrandDetails">Enter brand and awning name</label>
+                <textarea id="missingBrandDetails" rows="4" placeholder="Enter brand and awning name" required></textarea>
+
+                <button type="submit">Submit</button>
+              </form>
+
+              <div class="missing-brand-panel acknowledgement-card" aria-live="polite">
+                <p class="acknowledgement-kicker">Thanks</p>
+                <h3>We've got it.</h3>
+                <p>We'll get back to you.</p>
+              </div>
+            </div>
+          </section>
 
           <section class="result result-slide-shell">
             <div class="action-slider-track">
@@ -64,8 +76,13 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
                 <input id="emailReminderEmail" type="email" placeholder="you@example.com" required />
 
                 <button type="submit">Send reminder</button>
-                <p class="form-status" id="emailReminderStatus"></p>
               </form>
+
+              <div class="action-slider-panel acknowledgement-card" aria-live="polite">
+                <p class="acknowledgement-kicker">Thanks</p>
+                <h3>We've got it.</h3>
+                <p>We'll email this setup to you.</p>
+              </div>
             </div>
           </section>
         </div>
@@ -81,11 +98,10 @@ const buyNowButton = document.querySelector<HTMLButtonElement>('#buyNow')!;
 const addToCartButton = document.querySelector<HTMLButtonElement>('#addToCart')!;
 const emailReminderButton = document.querySelector<HTMLButtonElement>('#emailReminder')!;
 const actionSlider = document.querySelector<HTMLElement>('.result-slide-shell')!;
+const missingBrandShell = document.querySelector<HTMLElement>('#missingBrandShell')!;
 const missingBrandForm = document.querySelector<HTMLFormElement>('#missingBrandForm')!;
-const missingBrandStatus = document.querySelector<HTMLElement>('#missingBrandStatus')!;
 const emailReminderForm = document.querySelector<HTMLFormElement>('#emailReminderForm')!;
 const emailReminderBackButton = document.querySelector<HTMLButtonElement>('#emailReminderBack')!;
-const emailReminderStatus = document.querySelector<HTMLElement>('#emailReminderStatus')!;
 
 let csvFitments: Fitment[] = [];
 let renderVersion = 0;
@@ -118,20 +134,17 @@ function unavailableHeading(brand: string, model: string) {
 const setActionsVisible = (isVisible: boolean) => {
   actionSlider.classList.toggle('has-actions', isVisible);
   actionSlider.classList.remove('is-email-reminder-open');
+  actionSlider.classList.remove('is-acknowledgement-open');
   actionButtons.forEach((button) => {
     button.disabled = !isVisible;
   });
-
-  if (!isVisible) {
-    emailReminderStatus.textContent = '';
-  }
 };
 
 const setMissingBrandFormVisible = (isVisible: boolean) => {
-  missingBrandForm.hidden = !isVisible;
+  missingBrandShell.hidden = !isVisible;
   actionSlider.hidden = isVisible;
   if (!isVisible) {
-    missingBrandStatus.textContent = '';
+    missingBrandShell.classList.remove('is-acknowledgement-open');
   }
 };
 
@@ -319,7 +332,7 @@ modelSelect.addEventListener('change', () => {
   `;
 
   actionSlider.classList.remove('is-email-reminder-open');
-  emailReminderStatus.textContent = '';
+  actionSlider.classList.remove('is-acknowledgement-open');
   setActionsVisible(true);
   void hydrateProductPrices(selectedFitment, currentRenderVersion);
 });
@@ -342,13 +355,14 @@ emailReminderBackButton.addEventListener('click', () => {
 
 emailReminderForm.addEventListener('submit', (event) => {
   event.preventDefault();
-  emailReminderStatus.textContent = "Thanks, we'll email this setup to you.";
   emailReminderForm.reset();
+  actionSlider.classList.remove('is-email-reminder-open');
+  actionSlider.classList.add('is-acknowledgement-open');
 });
 
 missingBrandForm.addEventListener('submit', (event) => {
   event.preventDefault();
-  missingBrandStatus.textContent = "Thanks, we'll get back to you.";
   missingBrandForm.reset();
+  missingBrandShell.classList.add('is-acknowledgement-open');
 });
 

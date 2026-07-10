@@ -134,6 +134,32 @@ select {
   display: none;
 }
 
+.missing-brand-slide-shell {
+  overflow: hidden;
+}
+
+.missing-brand-slider-track {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  width: 200%;
+  transition: transform 260ms ease;
+}
+
+.missing-brand-slide-shell.is-acknowledgement-open .missing-brand-slider-track {
+  transform: translateX(-50%);
+}
+
+.missing-brand-panel {
+  min-width: 0;
+  box-sizing: border-box;
+  padding-right: 18px;
+}
+
+.missing-brand-panel + .missing-brand-panel {
+  padding-right: 0;
+  padding-left: 18px;
+}
+
 .missing-brand-form p {
   margin: 0 0 16px;
   color: #4d4d4d;
@@ -172,13 +198,17 @@ select {
 
 .action-slider-track {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  width: 200%;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  width: 300%;
   transition: transform 260ms ease;
 }
 
 .result-slide-shell.is-email-reminder-open .action-slider-track {
-  transform: translateX(-50%);
+  transform: translateX(-33.3333%);
+}
+
+.result-slide-shell.is-acknowledgement-open .action-slider-track {
+  transform: translateX(-66.6667%);
 }
 
 .action-slider-panel {
@@ -195,6 +225,53 @@ select {
 .result-slide-shell.is-email-reminder-open .action-slider-panel:first-child {
   opacity: 0;
   pointer-events: none;
+}
+
+.result-slide-shell.is-acknowledgement-open .action-slider-panel:not(:last-child),
+.missing-brand-slide-shell.is-acknowledgement-open .missing-brand-panel:first-child {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.acknowledgement-card {
+  min-height: 190px;
+  display: grid;
+  align-content: center;
+  justify-items: start;
+  color: #1d1d1d;
+  animation: acknowledgement-slide-in 260ms ease;
+}
+
+.acknowledgement-card h3 {
+  margin: 0;
+  color: #00495D;
+  font-size: 26px;
+}
+
+.acknowledgement-card p {
+  margin: 8px 0 0;
+  color: #4d4d4d;
+}
+
+.acknowledgement-kicker {
+  margin: 0 0 8px;
+  color: #B8AB17;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+@keyframes acknowledgement-slide-in {
+  from {
+    opacity: 0;
+    transform: translateX(18px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 .action-buttons {

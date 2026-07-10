@@ -20,12 +20,14 @@
     addingToCartMessage: 'Adding setup to cart...',
     addedToCartMessage: 'Added to cart.',
     missingBrandOption: "I can't find my awning brand",
+    missingBrandSuccessMessage: "We'll get back to you.",
     emailReminderLabel: "Email me so I don't forget",
     emailReminderMessage: "Enter your email and we'll send this setup to you.",
     emailReminderEmailLabel: 'Enter email',
     emailReminderEmailPlaceholder: 'you@example.com',
     emailReminderSubmitLabel: 'Send reminder',
     emailReminderBackLabel: 'Back',
+    emailReminderSuccessMessage: "We'll email this setup to you.",
   };
   var priceCache = {};
 
@@ -319,6 +321,46 @@
     status.classList.toggle('is-error', Boolean(isError));
   }
 
+  function renderAcknowledgementCard(message) {
+    return [
+      '<div class="racksbrax-fitment-finder__acknowledgement-card" aria-live="polite">',
+      '<p class="racksbrax-fitment-finder__acknowledgement-kicker">Thanks</p>',
+      '<h3>We\'ve got it.</h3>',
+      '<p>' + escapeHtml(message) + '</p>',
+      '</div>',
+    ].join('');
+  }
+
+  function contactReturnUrl(type) {
+    var url = new URL(window.location.href);
+
+    url.searchParams.set('racksbrax_contact', type);
+    url.hash = 'racksbrax-fitment-finder';
+
+    return url.pathname + url.search + url.hash;
+  }
+
+  function prepareContactForm(form, type) {
+    if (!form) return;
+
+    form.addEventListener('submit', function () {
+      var submitButton = form.querySelector('button[type="submit"]');
+      var returnTo = form.querySelector('[name="return_to"]');
+
+      if (!form.checkValidity()) {
+        return;
+      }
+
+      if (returnTo) {
+        returnTo.value = contactReturnUrl(type);
+      }
+
+      if (submitButton) {
+        submitButton.disabled = true;
+      }
+    });
+  }
+
   function addFitmentToCart(fitment) {
     var items = cartItemsForFitment(fitment);
 
@@ -471,7 +513,9 @@
       '<span aria-hidden="true">←</span>',
       '</button>',
       '<form method="post" action="/contact#contact_form" accept-charset="UTF-8">',
+      '<input type="hidden" name="utf8" value="&#10003;">',
       '<input type="hidden" name="form_type" value="contact">',
+      '<input type="hidden" name="return_to" value="">',
       '<input type="hidden" name="contact[subject]" value="Fitment reminder">',
       '<textarea name="contact[body]" hidden>' + escapeHtml(fitmentReminderBody(fitment, showFitmentNotes)) + '</textarea>',
       '<p>' + escapeHtml(copy.emailReminderMessage) + '</p>',
@@ -510,6 +554,7 @@
 
     hydrateProductPrices(result, fitment, copy);
     attachActionButtons(result, fitment, copy);
+    prepareContactForm(result.querySelector('.racksbrax-fitment-finder__email-reminder form'), 'email_reminder');
   }
 
   function initFinder(section) {
@@ -525,6 +570,8 @@
     var copy = getCopy(section);
     var missingBrandValue = '__missing_brand__';
     var showFitmentNotes = section.dataset.showFitmentNotes !== 'false';
+    var missingBrandContactForm = missingBrandForm && missingBrandForm.querySelector('form');
+    var postedContactType = new URLSearchParams(window.location.search).get('racksbrax_contact');
 
     function setMissingBrandFormVisible(isVisible) {
       if (!missingBrandForm) return;
@@ -534,6 +581,17 @@
     }
 
     if (!csvUrl || !brandSelect || !modelSelect || !result) return;
+
+    prepareContactForm(missingBrandContactForm, 'missing_brand');
+
+    if (postedContactType === 'missing_brand') {
+      setMissingBrandFormVisible(true);
+      if (missingBrandForm) {
+        missingBrandForm.classList.add('is-acknowledgement-open');
+      }
+    } else if (postedContactType === 'email_reminder') {
+      result.innerHTML = renderAcknowledgementCard(copy.emailReminderSuccessMessage);
+    }
 
     fetch(csvUrl)
       .then(function (response) {
