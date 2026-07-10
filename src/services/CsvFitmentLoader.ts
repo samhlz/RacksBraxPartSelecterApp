@@ -37,7 +37,7 @@ function rowToFitment(row: Record<string, string>): Fitment {
     productRange: clean(row['RacksBrax Products']),
     accessories: clean(row['Accessories']),
     products: [product1, product2].filter(Boolean) as RecommendedProduct[],
-    note: clean(row['Note']),
+    note: cleanNote(row['Note']),
     pocketGuideUrl: clean(row['Download Link']),
     brandLogoUrl: extractUrl(row['Logo']),
   };
@@ -63,6 +63,10 @@ function makeProduct(name: string, sku: string, url: string): RecommendedProduct
 
 function clean(value: string | undefined): string {
   return (value || '').trim();
+}
+
+function cleanNote(value: string | undefined): string {
+  return clean(value).replace(/^(fitment\s+)?note\b[:\s-]*/i, '');
 }
 
 function extractVariantId(url: string): string | undefined {

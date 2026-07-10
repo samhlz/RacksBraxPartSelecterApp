@@ -420,6 +420,7 @@
   data-initial-result="{{ section.settings.initial_result | escape }}"
   data-model-prompt="{{ section.settings.model_prompt | escape }}"
   data-recommendation-template="{{ section.settings.recommendation_template | escape }}"
+  data-show-fitment-notes="{{ section.settings.show_fitment_notes }}"
   data-no-awnings-message="{{ section.settings.no_awnings_message | escape }}"
   data-load-error-message="{{ section.settings.load_error_message | escape }}"
   data-product-label="{{ section.settings.product_label | escape }}"
@@ -619,6 +620,12 @@
       "id": "recommendation_copy",
       "label": "Recommendation copy",
       "default": "Based on your awning selection, these are the parts you need."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_fitment_notes",
+      "label": "Show notes",
+      "default": true
     },
     {
       "type": "text",

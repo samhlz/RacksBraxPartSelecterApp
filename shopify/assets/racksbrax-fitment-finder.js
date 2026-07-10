@@ -139,6 +139,10 @@
     return products;
   }
 
+  function cleanNote(value) {
+    return String(value || '').trim().replace(/^(fitment\s+)?note\b[:\s-]*/i, '');
+  }
+
   function mapFitment(row) {
     return {
       brand: (row['Brand-2'] || '').trim(),
@@ -149,7 +153,7 @@
       accessories: (row.Accessories || '').trim(),
       products: buildProducts(row),
       pocketGuideUrl: (row['Download Link'] || '').trim(),
-      note: (row.Note || '').trim(),
+      note: cleanNote(row.Note),
     };
   }
 
@@ -393,18 +397,18 @@
     }
   }
 
-  function renderFitmentNote(fitment) {
-    if (!fitment.note) return '';
+  function renderFitmentNote(fitment, showFitmentNotes) {
+    if (!showFitmentNotes || !fitment.note) return '';
 
     return [
       '<div class="racksbrax-fitment-finder__note">',
-      '<strong>Fitment note:</strong> ',
+      '<strong>Note:</strong> ',
       escapeHtml(fitment.note),
       '</div>',
     ].join('');
   }
 
-  function fitmentReminderBody(fitment) {
+  function fitmentReminderBody(fitment, showFitmentNotes) {
     return [
       'Fitment reminder request',
       'Brand: ' + fitment.brand,
@@ -412,7 +416,7 @@
       'Products: ' + fitment.products.map(function (product) {
         return product.name + (product.sku ? ' (' + product.sku + ')' : '');
       }).join(', '),
-      fitment.note ? 'Fitment note: ' + fitment.note : '',
+      showFitmentNotes && fitment.note ? 'Note: ' + fitment.note : '',
     ].filter(Boolean).join('\n');
   }
 
@@ -460,7 +464,7 @@
     ].join('');
   }
 
-  function renderEmailReminderForm(fitment, copy) {
+  function renderEmailReminderForm(fitment, copy, showFitmentNotes) {
     return [
       '<div class="racksbrax-fitment-finder__slide-panel racksbrax-fitment-finder__email-reminder">',
       '<button class="racksbrax-fitment-finder__back-action" type="button" data-email-reminder-back aria-label="' + escapeHtml(copy.emailReminderBackLabel) + '">',
@@ -469,7 +473,7 @@
       '<form method="post" action="/contact#contact_form" accept-charset="UTF-8">',
       '<input type="hidden" name="form_type" value="contact">',
       '<input type="hidden" name="contact[subject]" value="Fitment reminder">',
-      '<textarea name="contact[body]" hidden>' + escapeHtml(fitmentReminderBody(fitment)) + '</textarea>',
+      '<textarea name="contact[body]" hidden>' + escapeHtml(fitmentReminderBody(fitment, showFitmentNotes)) + '</textarea>',
       '<p>' + escapeHtml(copy.emailReminderMessage) + '</p>',
       '<label for="RacksBraxEmailReminder">' + escapeHtml(copy.emailReminderEmailLabel) + '</label>',
       '<input id="RacksBraxEmailReminder" type="email" name="contact[email]" autocomplete="email" required placeholder="' + escapeHtml(copy.emailReminderEmailPlaceholder) + '">',
@@ -479,7 +483,7 @@
     ].join('');
   }
 
-  function renderResult(result, fitment, copy) {
+  function renderResult(result, fitment, copy, showFitmentNotes) {
     result.classList.remove('is-email-reminder-open');
     result.innerHTML = [
       '<div class="racksbrax-fitment-finder__slide">',
@@ -488,7 +492,7 @@
       '<div class="racksbrax-fitment-finder__result-header">',
       '<h3>' + escapeHtml(recommendationHeading(fitment, copy)) + '</h3>',
       '</div>',
-      renderFitmentNote(fitment),
+      renderFitmentNote(fitment, showFitmentNotes),
       '<div class="racksbrax-fitment-finder__product-results">',
       renderProductCards(fitment, copy),
       '</div>',
@@ -499,7 +503,7 @@
       '</div>',
       '<p class="racksbrax-fitment-finder__action-status" data-action-status></p>',
       '</div>',
-      renderEmailReminderForm(fitment, copy),
+      renderEmailReminderForm(fitment, copy, showFitmentNotes),
       '</div>',
       '</div>',
     ].join('');
@@ -520,6 +524,7 @@
     var missingBrandForm = section.querySelector('[data-missing-brand-form]');
     var copy = getCopy(section);
     var missingBrandValue = '__missing_brand__';
+    var showFitmentNotes = section.dataset.showFitmentNotes !== 'false';
 
     function setMissingBrandFormVisible(isVisible) {
       if (!missingBrandForm) return;
@@ -619,7 +624,7 @@
             return;
           }
 
-          renderResult(result, selectedFitment, copy);
+          renderResult(result, selectedFitment, copy, showFitmentNotes);
         });
       })
       .catch(function (error) {

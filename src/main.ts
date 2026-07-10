@@ -92,6 +92,7 @@ let renderVersion = 0;
 
 const missingBrandValue = '__missing_brand__';
 const actionButtons = [buyNowButton, addToCartButton, emailReminderButton];
+const showFitmentNotes = true;
 const priceCache = new Map<string, Promise<string | undefined>>();
 
 function titleCase(value: string) {
@@ -307,8 +308,8 @@ modelSelect.addEventListener('change', () => {
     </div>
 
     ${
-      selectedFitment.note
-        ? `<div class="fitment-note"><strong>Fitment note:</strong> ${selectedFitment.note}</div>`
+      showFitmentNotes && selectedFitment.note
+        ? `<div class="fitment-note"><strong>Note:</strong> ${selectedFitment.note}</div>`
         : ''
     }
 
