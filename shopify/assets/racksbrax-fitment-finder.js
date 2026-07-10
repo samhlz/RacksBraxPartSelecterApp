@@ -21,6 +21,12 @@
     addedToCartMessage: 'Added to cart.',
     missingBrandOption: "I can't find my awning brand",
     missingBrandSuccessMessage: "We'll get back to you.",
+    unavailableNotifyLabel: 'Let me know when it fits',
+    unavailableNotifyMessage: "We can let you know when this setup becomes available.",
+    unavailableNotifyEmailLabel: 'Enter email',
+    unavailableNotifyEmailPlaceholder: 'you@example.com',
+    unavailableNotifySubmitLabel: 'Notify me',
+    unavailableNotifySuccessMessage: "We'll let you know when this setup becomes available.",
     emailReminderLabel: "Email me so I don't forget",
     emailReminderMessage: "Enter your email and we'll send this setup to you.",
     emailReminderEmailLabel: 'Enter email',
@@ -462,6 +468,14 @@
     ].filter(Boolean).join('\n');
   }
 
+  function unavailableNotifyBody(fitment) {
+    return [
+      'Unavailable fitment notification request',
+      'Brand: ' + fitment.brand,
+      'Model: ' + fitment.model,
+    ].join('\n');
+  }
+
   function titleCase(value) {
     return String(value || '').toLowerCase().replace(/\S+/g, function (word) {
       return word.charAt(0).toUpperCase() + word.slice(1);
@@ -498,12 +512,64 @@
   function renderUnavailableResult(result, fitment, copy) {
     result.classList.remove('is-email-reminder-open');
     result.innerHTML = [
+      '<div class="racksbrax-fitment-finder__slide">',
+      '<div class="racksbrax-fitment-finder__slide-track">',
+      '<div class="racksbrax-fitment-finder__slide-panel">',
       '<div class="racksbrax-fitment-finder__result-header">',
       '<h3>',
       escapeHtml(unavailableHeading(fitment, copy)),
       '</h3>',
+      '<p class="racksbrax-fitment-finder__unavailable-copy">' + escapeHtml(copy.unavailableNotifyMessage) + '</p>',
+      '</div>',
+      '<div class="racksbrax-fitment-finder__actions">',
+      '<button class="racksbrax-fitment-finder__email-action" type="button" data-unavailable-notify>' + escapeHtml(copy.unavailableNotifyLabel) + '</button>',
+      '</div>',
+      '</div>',
+      renderUnavailableNotifyForm(fitment, copy),
+      '</div>',
       '</div>',
     ].join('');
+
+    attachUnavailableNotify(result);
+    prepareContactForm(result.querySelector('.racksbrax-fitment-finder__unavailable-notify form'), 'unavailable_notify');
+  }
+
+  function renderUnavailableNotifyForm(fitment, copy) {
+    return [
+      '<div class="racksbrax-fitment-finder__slide-panel racksbrax-fitment-finder__email-reminder racksbrax-fitment-finder__unavailable-notify">',
+      '<button class="racksbrax-fitment-finder__back-action" type="button" data-unavailable-notify-back aria-label="' + escapeHtml(copy.emailReminderBackLabel) + '">',
+      '<span aria-hidden="true">â†</span>',
+      '</button>',
+      '<form method="post" action="/contact#contact_form" accept-charset="UTF-8">',
+      '<input type="hidden" name="utf8" value="&#10003;">',
+      '<input type="hidden" name="form_type" value="contact">',
+      '<input type="hidden" name="return_to" value="">',
+      '<input type="hidden" name="contact[subject]" value="Unavailable fitment notification">',
+      '<textarea name="contact[body]" hidden>' + escapeHtml(unavailableNotifyBody(fitment)) + '</textarea>',
+      '<p>' + escapeHtml(copy.unavailableNotifyMessage) + '</p>',
+      '<label for="RacksBraxUnavailableNotify">' + escapeHtml(copy.unavailableNotifyEmailLabel) + '</label>',
+      '<input id="RacksBraxUnavailableNotify" type="email" name="contact[email]" autocomplete="email" required placeholder="' + escapeHtml(copy.unavailableNotifyEmailPlaceholder) + '">',
+      '<button type="submit">' + escapeHtml(copy.unavailableNotifySubmitLabel) + '</button>',
+      '</form>',
+      '</div>',
+    ].join('');
+  }
+
+  function attachUnavailableNotify(result) {
+    var notifyButton = result.querySelector('[data-unavailable-notify]');
+    var backButton = result.querySelector('[data-unavailable-notify-back]');
+
+    if (notifyButton) {
+      notifyButton.addEventListener('click', function () {
+        result.classList.add('is-email-reminder-open');
+      });
+    }
+
+    if (backButton) {
+      backButton.addEventListener('click', function () {
+        result.classList.remove('is-email-reminder-open');
+      });
+    }
   }
 
   function renderEmailReminderForm(fitment, copy, showFitmentNotes) {
@@ -591,6 +657,8 @@
       }
     } else if (postedContactType === 'email_reminder') {
       result.innerHTML = renderAcknowledgementCard(copy.emailReminderSuccessMessage);
+    } else if (postedContactType === 'unavailable_notify') {
+      result.innerHTML = renderAcknowledgementCard(copy.unavailableNotifySuccessMessage);
     }
 
     fetch(csvUrl)

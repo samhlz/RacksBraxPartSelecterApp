@@ -225,11 +225,16 @@
 .racksbrax-fitment-finder__result-header h3 {
   margin: 0;
   font-size: 22px;
+  line-height: 1.18;
 }
 
 .racksbrax-fitment-finder__result-header p {
   margin: 8px 0 0;
   color: #4d4d4d;
+}
+
+.racksbrax-fitment-finder__unavailable-copy {
+  line-height: 1.35;
 }
 
 .racksbrax-fitment-finder__note {
@@ -245,12 +250,13 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 12px;
+  margin-top: 14px;
 }
 
 .racksbrax-fitment-finder__product-card {
   display: grid;
-  grid-template-columns: 96px minmax(0, 1fr);
-  gap: 14px;
+  grid-template-columns: 86px minmax(0, 1fr);
+  gap: 12px;
   align-items: center;
   padding: 14px;
   border: 1px solid #d9d9d9;
@@ -265,7 +271,8 @@
 }
 
 .racksbrax-fitment-finder__product-image {
-  width: 96px;
+  width: 86px;
+  max-width: 100%;
   aspect-ratio: 1;
   object-fit: contain;
   border-radius: 8px;
@@ -274,20 +281,23 @@
 
 .racksbrax-fitment-finder__product-card-copy {
   min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .racksbrax-fitment-finder__product-label {
   margin: 0 0 8px;
   color: #00495D;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
-  letter-spacing: 0.08em;
+  line-height: 1.2;
+  letter-spacing: 0.07em;
   text-transform: uppercase;
 }
 
 .racksbrax-fitment-finder__product-card h4 {
   margin: 0;
-  font-size: 18px;
+  font-size: 17px;
+  line-height: 1.12;
 }
 
 .racksbrax-fitment-finder__price {
