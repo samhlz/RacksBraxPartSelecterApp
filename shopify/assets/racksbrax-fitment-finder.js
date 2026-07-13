@@ -36,6 +36,10 @@
     emailReminderSuccessMessage: "We'll email this setup to you.",
   };
   var priceCache = {};
+  var supportedAccessories = {
+    Awnings: true,
+    'Shower Tents': true,
+  };
 
   function copyValue(section, key) {
     return section.dataset[key] || defaultCopy[key];
@@ -538,7 +542,7 @@
     return [
       '<div class="racksbrax-fitment-finder__slide-panel racksbrax-fitment-finder__email-reminder racksbrax-fitment-finder__unavailable-notify">',
       '<button class="racksbrax-fitment-finder__back-action" type="button" data-unavailable-notify-back aria-label="' + escapeHtml(copy.emailReminderBackLabel) + '">',
-      '<span aria-hidden="true">â†</span>',
+      '<span aria-hidden="true">&larr;</span>',
       '</button>',
       '<form method="post" action="/contact#contact_form" accept-charset="UTF-8">',
       '<input type="hidden" name="utf8" value="&#10003;">',
@@ -576,7 +580,7 @@
     return [
       '<div class="racksbrax-fitment-finder__slide-panel racksbrax-fitment-finder__email-reminder">',
       '<button class="racksbrax-fitment-finder__back-action" type="button" data-email-reminder-back aria-label="' + escapeHtml(copy.emailReminderBackLabel) + '">',
-      '<span aria-hidden="true">←</span>',
+      '<span aria-hidden="true">&larr;</span>',
       '</button>',
       '<form method="post" action="/contact#contact_form" accept-charset="UTF-8">',
       '<input type="hidden" name="utf8" value="&#10003;">',
@@ -673,7 +677,7 @@
         var fitments = parseCsv(csvText)
           .map(mapFitment)
           .filter(function (fitment) {
-            return fitment.brand && fitment.model && fitment.accessories === 'Awnings';
+            return fitment.brand && fitment.model && supportedAccessories[fitment.accessories];
           });
 
         var brands = Array.from(

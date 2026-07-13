@@ -69,7 +69,7 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
               </div>
 
               <form id="emailReminderForm" class="action-slider-panel email-reminder-form">
-                <button id="emailReminderBack" class="back-action" type="button" aria-label="Back">←</button>
+                <button id="emailReminderBack" class="back-action" type="button" aria-label="Back">&larr;</button>
                 <p>Enter your email and we'll send this setup to you.</p>
 
                 <label for="emailReminderEmail">Enter email</label>
@@ -110,6 +110,7 @@ const missingBrandValue = '__missing_brand__';
 const actionButtons = [buyNowButton, addToCartButton, emailReminderButton];
 const showFitmentNotes = true;
 const priceCache = new Map<string, Promise<string | undefined>>();
+let emailFormMode: 'reminder' | 'unavailable' = 'reminder';
 
 function titleCase(value: string) {
   return value.toLowerCase().replace(/\S+/g, (word) => word.charAt(0).toUpperCase() + word.slice(1));
@@ -176,9 +177,26 @@ const renderUnavailableFitment = (fitment: Fitment) => {
   result.innerHTML = `
     <div class="recommendation-header">
       <h3>${unavailableHeading(fitment.brand, fitment.model)}</h3>
+      <p>We can let you know when this setup becomes available.</p>
+    </div>
+
+    <div class="action-buttons unavailable-actions">
+      <button id="unavailableNotify" class="email-action" type="button">Let me know when it fits</button>
     </div>
   `;
-  setActionsVisible(false);
+  actionButtons.forEach((button) => {
+    button.disabled = true;
+  });
+  actionSlider.classList.add('has-actions');
+  actionSlider.classList.remove('is-email-reminder-open');
+  actionSlider.classList.remove('is-acknowledgement-open');
+
+  document.querySelector<HTMLButtonElement>('#unavailableNotify')!.addEventListener('click', () => {
+    emailFormMode = 'unavailable';
+    emailReminderForm.querySelector('p')!.textContent = 'We can let you know when this setup becomes available.';
+    emailReminderForm.querySelector('button[type="submit"]')!.textContent = 'Notify me';
+    actionSlider.classList.add('is-email-reminder-open');
+  });
 };
 
 const productCacheKey = (product: Fitment['products'][number]) =>
@@ -346,6 +364,9 @@ addToCartButton.addEventListener('click', () => {
 });
 
 emailReminderButton.addEventListener('click', () => {
+  emailFormMode = 'reminder';
+  emailReminderForm.querySelector('p')!.textContent = "Enter your email and we'll send this setup to you.";
+  emailReminderForm.querySelector('button[type="submit"]')!.textContent = 'Send reminder';
   actionSlider.classList.add('is-email-reminder-open');
 });
 
@@ -357,6 +378,10 @@ emailReminderForm.addEventListener('submit', (event) => {
   event.preventDefault();
   emailReminderForm.reset();
   actionSlider.classList.remove('is-email-reminder-open');
+  document.querySelector<HTMLElement>('.result-slide-shell .acknowledgement-card p:last-child')!.textContent =
+    emailFormMode === 'unavailable'
+      ? "We'll let you know when this setup becomes available."
+      : "We'll email this setup to you.";
   actionSlider.classList.add('is-acknowledgement-open');
 });
 

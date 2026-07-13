@@ -1,6 +1,7 @@
 import type { Fitment, RecommendedProduct } from '../models/Fitment';
 
 const CSV_PATH = `${import.meta.env.BASE_URL}data/fitments_product_columns_with_urls.csv`;
+const SUPPORTED_ACCESSORIES = new Set(['Awnings', 'Shower Tents']);
 
 export async function loadFitments(): Promise<Fitment[]> {
   const response = await fetch(CSV_PATH);
@@ -14,7 +15,7 @@ export async function loadFitments(): Promise<Fitment[]> {
 
   return rows
     .map(rowToFitment)
-    .filter((fitment) => fitment.brand && fitment.model && fitment.accessories === 'Awnings');
+    .filter((fitment) => fitment.brand && fitment.model && SUPPORTED_ACCESSORIES.has(fitment.accessories || ''));
 }
 
 function rowToFitment(row: Record<string, string>): Fitment {
